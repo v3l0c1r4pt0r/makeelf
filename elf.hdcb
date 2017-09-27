@@ -1,0 +1,54 @@
+#!/usr/bin/env hdcb
+define magic 4
+define class 1
+define endianness 1
+define version 1
+define abi 1
+define padding 1 0 8 # array
+
+use magic
+use class class_l
+use endianness
+use version
+use abi
+use padding 8
+
+if [ $class_l -eq 1 ]; then
+  wlen=4
+elif [ $class_l -eq 2 ]; then
+  wlen=8
+else
+  echo "Unknown class: $class_l"
+  exit 1;
+fi;
+
+define e_type 2
+define e_machine 2
+define e_version 4
+define e_entry $wlen
+define e_phoff $wlen
+define e_shoff $wlen
+define e_flags 4
+define e_ehsize 2
+define e_phentsize 2
+define e_phnum 2
+define e_shentsize 2
+define e_shnum 2
+define e_shstrndx 2
+
+legend;
+echo;
+
+use e_type
+use e_machine
+use e_version
+use e_entry
+use e_phoff
+use e_shoff
+use e_flags
+use e_ehsize
+use e_phentsize
+use e_phnum
+use e_shentsize
+use e_shnum
+use e_shstrndx
