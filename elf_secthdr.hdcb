@@ -1,0 +1,68 @@
+#!/usr/bin/env hdcb
+define magic 4
+define class 1
+define endianness 1
+define version 1
+define abi 1
+define padding 1 0 8 # array
+
+use magic
+use class class_l
+use endianness
+use version
+use abi
+use padding 8
+
+if [ $class_l -eq 1 ]; then
+  wlen=4
+elif [ $class_l -eq 2 ]; then
+  wlen=8
+else
+  echo "Unknown class: $class_l"
+  exit 1;
+fi;
+
+define e_shoff $wlen
+
+define e_shentsize 2
+define e_shnum 2
+define e_shstrndx 2
+
+let cursor=32
+use e_shoff e_shoff_b
+
+let cursor=46
+use e_shentsize e_shentsize_b
+use e_shnum e_shnum_b
+use e_shstrndx e_shstrndx_b
+
+define sh_name 4
+define sh_type 4
+define sh_flags 4
+define sh_addr $wlen
+define sh_offset $wlen
+define sh_size 4
+define sh_link 4
+define sh_info 4
+define sh_addralign 4
+define sh_entsize 4
+
+let cursor=$e_shoff_b
+for i in $(seq 1 $e_shnum_b); do
+  echo $i;
+  use sh_name
+  use sh_type
+  use sh_flags
+  use sh_addr
+  use sh_offset sh_offset_b
+  use sh_size
+  use sh_link
+  use sh_info
+  use sh_addralign
+  use sh_entsize
+  saved=$cursor
+  cursor=$saved
+done
+
+legend;
+echo;
