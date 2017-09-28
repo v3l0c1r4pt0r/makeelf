@@ -51,7 +51,31 @@ class Elf32_e_ident:
     def __init__(self, EI_MAG=b'\x7fELF', EI_CLASS=ELFCLASS.ELFCLASS32,
             EI_DATA=ELFDATA.ELFDATA2MSB, EI_VERSION=EV.EV_CURRENT,
             EI_OSABI=ELFOSABI.ELFOSABI_NONE):
-        pass
+        if isinstance(EI_MAG, bytes):
+            self.EI_MAG = EI_MAG
+            # TODO: check if valid and signal someone if invalid
+        else:
+            raise Exception('EI_MAG: wrong type: %s' % type(EI_MAG).__name__)
+
+        if isinstance(EI_CLASS, ELFCLASS):
+            self.EI_CLASS = EI_CLASS
+        else:
+            self.EI_CLASS = ELFCLASS[EI_CLASS]
+
+        if isinstance(EI_DATA, ELFDATA):
+            self.EI_DATA = EI_DATA
+        else:
+            self.EI_DATA = ELFDATA[EI_DATA]
+
+        if isinstance(EI_VERSION, EV):
+            self.EI_VERSION = EI_VERSION
+        else:
+            self.EI_VERSION = EV[EI_VERSION]
+
+        if isinstance(EI_OSABI, ELFOSABI):
+            self.EI_OSABI = EI_OSABI
+        else:
+            self.EI_OSABI = ELFOSABI[EI_OSABI]
 
 
 if __name__ == '__main__':
