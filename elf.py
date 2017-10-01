@@ -236,7 +236,28 @@ class Elf32_Ehdr:
             e_version=1, e_entry=0, e_phoff=0, e_shoff=0, e_flags=0,
             e_ehsize=0x40, e_phentsize=0, e_phnum=0, e_shentsize=0, e_shnum=0,
             e_shstrndx=0):
-        pass
+
+        if e_ident is None:
+            self.e_ident = Elf32_e_ident()
+        else:
+            self.e_ident = e_ident
+
+        if isinstance(e_type, ET):
+            self.e_type = e_type
+        else:
+            self.e_type = ET[e_type]
+
+        self.e_version = e_version
+        self.e_entry = e_entry
+        self.e_phoff = e_phoff
+        self.e_shoff = e_shoff
+        self.e_flags = e_flags
+        self.e_ehsize = e_ehsize
+        self.e_phentsize = e_phentsize
+        self.e_phnum = e_phnum
+        self.e_shentsize = e_shentsize
+        self.e_shnum = e_shnum
+        self.e_shstrndx = e_shstrndx
 
 
 if __name__ == '__main__':
