@@ -1,29 +1,29 @@
 #!/usr/bin/env python3
 # Classes for ELF file serialization/deserialization
-from enum import IntEnum
+from type.enum import Enum
 
 """EI_CLASS enumeration"""
-class ELFCLASS(IntEnum):
+class ELFCLASS(Enum):
     ELFCLASSNONE = 0
     ELFCLASS32 = 1
     ELFCLASS64 = 2
 
 
 """EI_DATA enumeration"""
-class ELFDATA(IntEnum):
+class ELFDATA(Enum):
     ELFDATANONE = 0
     ELFDATA2LSB = 1
     ELFDATA2MSB = 2
 
 
 """EI_VERSION enumeration"""
-class EV(IntEnum):
+class EV(Enum):
     EV_NONE = 0
     EV_CURRENT = 1
 
 
 """EI_OSABI enumeration"""
-class ELFOSABI(IntEnum):
+class ELFOSABI(Enum):
     ELFOSABI_NONE = 0
     ELFOSABI_HPUX = 1
     ELFOSABI_NETBSD = 2
@@ -79,7 +79,7 @@ class Elf32_e_ident:
 
 
 """e_type enumeration"""
-class ET(IntEnum):
+class ET(Enum):
     ET_NONE = 0
     ET_REL = 1
     ET_EXEC = 2
@@ -92,7 +92,7 @@ class ET(IntEnum):
 
 
 """e_machine enumeration"""
-class EM(IntEnum):
+class EM(Enum):
     EM_NONE = 0
     EM_M32 = 1
     EM_SPARC = 2
