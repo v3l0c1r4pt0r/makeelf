@@ -247,6 +247,11 @@ class Elf32_Ehdr:
         else:
             self.e_type = ET[e_type]
 
+        if isinstance(e_machine, EM):
+            self.e_machine = e_machine
+        else:
+            self.e_machine = EM[e_machine]
+
         self.e_version = e_version
         self.e_entry = e_entry
         self.e_phoff = e_phoff
