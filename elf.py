@@ -401,6 +401,22 @@ class Elf32_Ehdr:
 
 
 if __name__ == '__main__':
-    elf = Elf32_Ehdr()
-    print(elf)
     print('tests')
+    print('obj->file')
+    e_ident = Elf32_e_ident(EI_OSABI=ELFOSABI.ELFOSABI_GNU)
+    Ehdr = Elf32_Ehdr(e_ident=e_ident, e_machine=0xbaab)
+    print(Ehdr)
+    import os
+    fd = os.open('out.elf', os.O_WRONLY | os.O_CREAT | os.O_TRUNC)
+    os.write(fd, bytes(Ehdr))
+    os.close(fd)
+    print('file->obj')
+    for file in ['microblaze_0.elf', 'rot13.elf']:
+        print(file)
+        fd = os.open(file, os.O_RDONLY)
+        b = os.read(fd, 0xffff)
+        os.close(fd)
+        print(len(b))
+        Ehdr, b = Elf32_Ehdr.from_bytes(b)
+        print(Ehdr)
+        print(b[:32])
