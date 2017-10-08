@@ -3,6 +3,7 @@
 import struct
 import sys
 from enum import IntEnum
+from type.align import align
 
 """Serializable enum object
 
@@ -50,6 +51,8 @@ class Enum(IntEnum):
         b = Enum._value_as_bytes(int(self))
         if sys.byteorder == 'little':
             b = bytes(reversed(b))
+        # if last set byte is less than width of the field, align
+        b = align(b, field_width)
         return b
 
     @classmethod
