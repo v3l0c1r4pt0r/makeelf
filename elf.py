@@ -294,6 +294,23 @@ class Elf32_Ehdr:
         self.e_shnum = e_shnum
         self.e_shstrndx = e_shstrndx
 
+    def __str__(self):
+        return '{e_ident=%s, e_type=%s, e_machine=%s, e_version=%s, '\
+    'e_entry=%s, e_phoff=%s, e_shoff=%s, e_flags=%s, e_ehsize=%s, '\
+    'e_phentsize=%s, e_phnum=%s, e_shentsize=%s, e_shnum=%s, '\
+                'e_shstrndx=%s}' % (self.e_ident, self.e_type, self.e_machine,
+                        self.e_version, self.e_entry, self.e_phoff,
+                        self.e_shoff, self.e_flags, self.e_ehsize,
+                        self.e_phentsize, self.e_phnum, self.e_shentsize,
+                        self.e_shnum, self.e_shstrndx)
+
+    def __repr__(self):
+        return '%s(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)' % \
+    (type(self).__name__, repr(self.e_ident), self.e_type, self.e_machine,
+            self.e_version, self.e_entry, self.e_phoff, self.e_shoff,
+            self.e_flags, self.e_ehsize, self.e_phentsize, self.e_phnum,
+            self.e_shentsize, self.e_shnum, self.e_shstrndx)
+
 
 if __name__ == '__main__':
     elf = Elf32_Ehdr()
