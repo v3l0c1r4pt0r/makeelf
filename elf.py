@@ -78,6 +78,19 @@ class Elf32_e_ident:
         else:
             self.EI_OSABI = ELFOSABI[EI_OSABI]
 
+    def __str__(self):
+        EI_MAG = self.EI_MAG
+        if EI_MAG == b'\x7fELF':
+            EI_MAG = "'^?ELF'"
+        return '{EI_MAG=%s, EI_CLASS=%s, EI_DATA=%s, EI_VERSION=%s, '\
+                'EI_OSABI=%s}' % (EI_MAG, self.EI_CLASS, self.EI_DATA,
+                        self.EI_VERSION, self.EI_OSABI)
+
+    def __repr__(self):
+        return '%s(%s, %s, %s, %s, %s)' % (type(self).__name__, repr(self.EI_MAG),
+                self.EI_CLASS, self.EI_DATA, self.EI_VERSION,
+                self.EI_OSABI)
+
     def __bytes__(self):
         packet = self.EI_MAG + bytes(self.EI_CLASS) + bytes(self.EI_DATA) + \
                 bytes(self.EI_VERSION) + bytes(self.EI_OSABI)
