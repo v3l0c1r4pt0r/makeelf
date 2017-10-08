@@ -145,10 +145,12 @@ class EM(Enum):
     EM_S370 = 9
     EM_MIPS_RS3_LE = 10
     # 11 was the old Sparc V9 ABI.
+    EM_OLD_SPARC_V9 = 11
     # 12 through 14 are reserved.
     EM_PARISC = 15
     # 16 is reserved.
     # Some old PowerPC object files use 17.
+    EM_PPC_OLD = 17
     EM_VPP500 = 17
     EM_SPARC32PLUS = 18
     EM_960 = 19
@@ -254,20 +256,36 @@ class EM(Enum):
     # NIOS
     EM_NIOS32 = 0xfebb
     # Old AVR objects used 0x1057 (EM_AVR is correct).
+    EM_AVR_OLD = 0x1057
     # Old MSP430 objects used 0x1059 (EM_MSP430 is correct).
+    EM_MSP430_OLD = 0x1059
     # Old FR30 objects used 0x3330 (EM_FR30 is correct).
+    EM_FR30_OLD = 0x3330
     # Old OpenRISC objects used 0x3426 and 0x8472 (EM_OR1K is correct).
+    EM_OR1K_OLD = 0x3426
     # Old D10V objects used 0x7650 (EM_D10V is correct).
+    EM_D10V_OLD = 0x7650
     # Old D30V objects used 0x7676 (EM_D30V is correct).
+    EM_D30V_OLD = 0x7676
     # Old IP2X objects used 0x8217 (EM_IP2K is correct).
+    EM_IP2K_OLD = 0x8217
     # Old PowerPC objects used 0x9025 (EM_PPC is correct).
+    EM_POWERPC_OLD = 0x9025
     # Old Alpha objects used 0x9026 (EM_ALPHA is correct).
+    EM_ALPHA_OLD = 0x9026
     # Old M32R objects used 0x9041 (EM_M32R is correct).
+    EM_M32R_OLD = 0x9041
     # Old V850 objects used 0x9080 (EM_V850 is correct).
+    EM_V850_OLD = 0x9080
     # Old S/390 objects used 0xa390 (EM_S390 is correct).
+    EM_S390_OLD = 0xa390
     # Old Xtensa objects used 0xabc7 (EM_XTENSA is correct).
+    EM_XTENSA_OLD = 0xabc7
+    EM_MICROBLAZE_OLD = 0xbaab
     # Old MN10300 objects used 0xbeef (EM_MN10300 is correct).
+    EM_MN10300_OLD = 0xbeef
     # Old MN10200 objects used 0xdead (EM_MN10200 is correct).
+    EM_MN10200_OLD = 0xdead
 
 
 class Elf32_Ehdr:
