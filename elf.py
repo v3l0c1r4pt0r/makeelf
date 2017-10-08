@@ -60,21 +60,29 @@ class Elf32_e_ident:
 
         if isinstance(EI_CLASS, ELFCLASS):
             self.EI_CLASS = EI_CLASS
+        elif EI_CLASS in map(int, ELFCLASS):
+            self.EI_CLASS = ELFCLASS(EI_CLASS)
         else:
             self.EI_CLASS = ELFCLASS[EI_CLASS]
 
         if isinstance(EI_DATA, ELFDATA):
             self.EI_DATA = EI_DATA
+        elif EI_DATA in map(int, ELFDATA):
+            self.EI_DATA = ELFDATA(EI_DATA)
         else:
             self.EI_DATA = ELFDATA[EI_DATA]
 
         if isinstance(EI_VERSION, EV):
             self.EI_VERSION = EI_VERSION
+        elif EI_VERSION in map(int, EV):
+            self.EI_VERSION = EV(EI_VERSION)
         else:
             self.EI_VERSION = EV[EI_VERSION]
 
         if isinstance(EI_OSABI, ELFOSABI):
             self.EI_OSABI = EI_OSABI
+        elif EI_OSABI in map(int, ELFOSABI):
+            self.EI_OSABI = ELFOSABI(EI_OSABI)
         else:
             self.EI_OSABI = ELFOSABI[EI_OSABI]
 
@@ -274,11 +282,15 @@ class Elf32_Ehdr:
 
         if isinstance(e_type, ET):
             self.e_type = e_type
+        elif e_type in map(int, ET):
+            self.e_type = EM(e_type)
         else:
             self.e_type = ET[e_type]
 
         if isinstance(e_machine, EM):
             self.e_machine = e_machine
+        elif e_machine in map(int, EM):
+            self.e_machine = EM(e_machine)
         else:
             self.e_machine = EM[e_machine]
 
