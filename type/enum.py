@@ -56,10 +56,14 @@ class Enum(IntEnum):
         return b
 
     @classmethod
-    def from_bytes(cls, b):
+    def from_bytes(cls, b, little=False):
         max_val = cls._max_value()
         fw = Enum._field_width(0, max_val)
         this, b = (b[:fw], b[fw:])
         if sys.byteorder == 'little':
+            this = bytes(reversed(this))
+        # in case of deserialization we need to get endianness from caller as
+        # only we know how many bytes we should reverse to get proper enum value
+        if little:
             this = bytes(reversed(this))
         return cls(cls._bytes_as_value(this)), b
