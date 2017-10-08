@@ -51,7 +51,7 @@ class Elf32_e_ident:
 
     def __init__(self, EI_MAG=b'\x7fELF', EI_CLASS=ELFCLASS.ELFCLASS32,
             EI_DATA=ELFDATA.ELFDATA2MSB, EI_VERSION=EV.EV_CURRENT,
-            EI_OSABI=ELFOSABI.ELFOSABI_NONE):
+            EI_OSABI=ELFOSABI.ELFOSABI_NONE, little=False):
         if isinstance(EI_MAG, bytes):
             self.EI_MAG = EI_MAG
             # TODO: check if valid and signal someone if invalid
@@ -85,6 +85,8 @@ class Elf32_e_ident:
             self.EI_OSABI = ELFOSABI(EI_OSABI)
         else:
             self.EI_OSABI = ELFOSABI[EI_OSABI]
+
+        self.little = little # should not be used, but for consistency set it
 
     def __str__(self):
         EI_MAG = self.EI_MAG
@@ -273,7 +275,7 @@ class Elf32_Ehdr:
     def __init__(self, e_ident=None, e_type=ET.ET_REL, e_machine=EM.EM_NONE,
             e_version=1, e_entry=0, e_phoff=0, e_shoff=0, e_flags=0,
             e_ehsize=0x40, e_phentsize=0, e_phnum=0, e_shentsize=0, e_shnum=0,
-            e_shstrndx=0):
+            e_shstrndx=0, little=False):
 
         if e_ident is None:
             self.e_ident = Elf32_e_ident()
@@ -305,6 +307,11 @@ class Elf32_Ehdr:
         self.e_shentsize = e_shentsize
         self.e_shnum = e_shnum
         self.e_shstrndx = e_shstrndx
+
+        self.little = little
+        if self.e_ident.EI_DATA is ELFDATA.ELFDATA2LSB:
+            # overriding explicit value for header consistency
+            self.little = True
 
     def __str__(self):
         return '{e_ident=%s, e_type=%s, e_machine=%s, e_version=%s, '\
