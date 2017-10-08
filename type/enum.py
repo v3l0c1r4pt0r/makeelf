@@ -4,6 +4,9 @@ import struct
 import sys
 from enum import IntEnum
 
+"""Serializable enum object
+
+Always serializes/deserializes to/from big endian integers"""
 class Enum(IntEnum):
 
     def _field_width(floor, ceiling):
@@ -16,7 +19,12 @@ class Enum(IntEnum):
             m = r % 256
         return i
 
-    def _field_as_bytes(field):
+    @classmethod
+    def _max_value(cls):
+        return max(map(int,cls))
+
+    """Converts int into bytes array of arbitrary length and in big order"""
+    def _value_as_bytes(field):
         ret = []
         r = field
         i = 1
@@ -29,10 +37,26 @@ class Enum(IntEnum):
         ret.append(r)
         return bytes(ret)
 
+    """Converts bytes array of arbitrary length and in little order into int"""
+    def _bytes_as_value(b):
+        value = 0
+        for i, v in enumerate(b):
+            value += 256**i * v
+        return value
+
     def __bytes__(self):
-        max_val = max(map(int,type(self)))
+        max_val = type(self)._max_value()
         field_width = Enum._field_width(0, max_val)
-        b = Enum._field_as_bytes(int(self))
+        b = Enum._value_as_bytes(int(self))
         if sys.byteorder == 'little':
-            b = reversed(b)
-        return bytes(b)
+            b = bytes(reversed(b))
+        return b
+
+    @classmethod
+    def from_bytes(cls, b):
+        max_val = cls._max_value()
+        fw = Enum._field_width(0, max_val)
+        this, b = (b[:fw], b[fw:])
+        if sys.byteorder == 'little':
+            this = bytes(reversed(this))
+        return cls(cls._bytes_as_value(this)), b
