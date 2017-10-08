@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 # Classes for ELF file serialization/deserialization
 from type.enum import Enum
+from type.align import align,unalign
 
 """EI_CLASS enumeration"""
 class ELFCLASS(Enum):
@@ -76,6 +77,22 @@ class Elf32_e_ident:
             self.EI_OSABI = EI_OSABI
         else:
             self.EI_OSABI = ELFOSABI[EI_OSABI]
+
+    def __bytes__(self):
+        packet = self.EI_MAG + bytes(self.EI_CLASS) + bytes(self.EI_DATA) + \
+                bytes(self.EI_VERSION) + bytes(self.EI_OSABI)
+        return align(packet, 16)
+
+    def from_bytes(b):
+        saved_b = b
+        EI_MAG, b = (b[:4], b[4:])
+        EI_CLASS, b = ELFCLASS.from_bytes(b)
+        EI_DATA, b = ELFDATA.from_bytes(b)
+        EI_VERSION, b = EV.from_bytes(b)
+        EI_OSABI, b = ELFOSABI.from_bytes(b)
+        b = unalign(saved_b, 16)
+        return Elf32_e_ident(EI_MAG=EI_MAG, EI_CLASS=EI_CLASS, EI_DATA=EI_DATA,
+                EI_VERSION=EI_VERSION, EI_OSABI=EI_OSABI), b
 
 
 """e_type enumeration"""
