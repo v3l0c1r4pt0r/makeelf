@@ -2,6 +2,8 @@
 # Classes for ELF file serialization/deserialization
 from type.enum import Enum
 from type.align import align,unalign
+from type.uint16 import uint16
+from type.uint32 import uint32
 
 """EI_CLASS enumeration"""
 class ELFCLASS(Enum):
@@ -292,7 +294,7 @@ class Elf32_Ehdr:
 
     def __init__(self, e_ident=None, e_type=ET.ET_REL, e_machine=EM.EM_NONE,
             e_version=1, e_entry=0, e_phoff=0, e_shoff=0, e_flags=0,
-            e_ehsize=0x40, e_phentsize=0, e_phnum=0, e_shentsize=0, e_shnum=0,
+            e_ehsize=0x34, e_phentsize=0, e_phnum=0, e_shentsize=0, e_shnum=0,
             e_shstrndx=0, little=False):
 
         if e_ident is None:
@@ -347,6 +349,55 @@ class Elf32_Ehdr:
             self.e_version, self.e_entry, self.e_phoff, self.e_shoff,
             self.e_flags, self.e_ehsize, self.e_phentsize, self.e_phnum,
             self.e_shentsize, self.e_shnum, self.e_shstrndx)
+
+    def __bytes__(self):
+        e_type = bytes(self.e_type)
+        e_machine = bytes(self.e_machine)
+        e_version = uint32(self.e_version)
+        e_entry = uint32(self.e_entry)
+        e_phoff = uint32(self.e_phoff)
+        e_shoff = uint32(self.e_shoff)
+        e_flags = uint32(self.e_flags)
+        e_ehsize = uint16(self.e_ehsize)
+        e_phentsize = uint16(self.e_phentsize)
+        e_phnum = uint16(self.e_phnum)
+        e_shentsize = uint16(self.e_shentsize)
+        e_shnum = uint16(self.e_shnum)
+        e_shstrndx = uint16(self.e_shstrndx)
+        if self.little:
+            e_type = bytes(reversed(e_type))
+            e_machine = bytes(reversed(e_machine))
+        b = bytes(self.e_ident) + bytes(e_type) + bytes(e_machine) + \
+                bytes(e_version) + bytes(e_entry) + bytes(e_phoff) + \
+                bytes(e_shoff) + bytes(e_flags) + bytes(e_ehsize) + \
+                bytes(e_phentsize) + bytes(e_phnum) + bytes(e_shentsize) + \
+                bytes(e_shnum) + bytes(e_shstrndx)
+        return b
+
+    def from_bytes(b):
+        e_ident, b = Elf32_e_ident.from_bytes(b)
+        # througout this function we rely only on ELF header regarding
+        # endianness
+        little = e_ident.EI_DATA is ELFDATA.ELFDATA2LSB
+        e_type, b = ET.from_bytes(b, little=little)
+        e_machine, b = EM.from_bytes(b, little=little)
+        e_version, b = uint32.from_bytes(b, little=little)
+        e_entry, b = uint32.from_bytes(b, little=little) # || 64b
+        e_phoff, b = uint32.from_bytes(b, little=little) # || 64b
+        e_shoff, b = uint32.from_bytes(b, little=little) # || 64b
+        e_flags, b = uint32.from_bytes(b, little=little)
+        e_ehsize, b = uint16.from_bytes(b, little=little)
+        e_phentsize, b = uint16.from_bytes(b, little=little)
+        e_phnum, b = uint16.from_bytes(b, little=little)
+        e_shentsize, b = uint16.from_bytes(b, little=little)
+        e_shnum, b = uint16.from_bytes(b, little=little)
+        e_shstrndx, b = uint16.from_bytes(b, little=little)
+        Ehdr = Elf32_Ehdr(e_ident=e_ident, e_type=e_type, e_machine=e_machine,
+                e_version=e_version, e_entry=e_entry, e_phoff=e_phoff,
+                e_shoff=e_shoff, e_flags=e_flags, e_ehsize=e_ehsize,
+                e_phentsize=e_phentsize, e_phnum=e_phnum,
+                e_shentsize=e_shentsize, e_shnum=e_shnum, e_shstrndx=e_shstrndx)
+        return Ehdr, b
 
 
 if __name__ == '__main__':
