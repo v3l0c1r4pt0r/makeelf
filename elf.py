@@ -403,7 +403,7 @@ class Elf32_Ehdr:
 class Elf32_Phdr:
 
     def __init__(self, p_type=0, p_flags=0, p_offset=0, p_vaddr=0, p_paddr=0,
-            p_filesz=0, p_memsz=0, p_align=0):
+            p_filesz=0, p_memsz=0, p_align=0, little=False):
         self.p_type = p_type
         self.p_flags = p_flags
         self.p_offset = p_offset
@@ -412,6 +412,8 @@ class Elf32_Phdr:
         self.p_filesz = p_filesz
         self.p_memsz = p_memsz
         self.p_align = p_align
+
+        self.little = little
 
     def __str__(self):
         return '{p_type=%s, p_flags=%s, p_offset=%s, p_vaddr=%s, p_paddr=%s, '\
