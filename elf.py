@@ -393,10 +393,12 @@ class Elf32_Ehdr:
         e_shnum, b = uint16.from_bytes(b, little=little)
         e_shstrndx, b = uint16.from_bytes(b, little=little)
         Ehdr = Elf32_Ehdr(e_ident=e_ident, e_type=e_type, e_machine=e_machine,
-                e_version=e_version, e_entry=e_entry, e_phoff=e_phoff,
-                e_shoff=e_shoff, e_flags=e_flags, e_ehsize=e_ehsize,
-                e_phentsize=e_phentsize, e_phnum=e_phnum,
-                e_shentsize=e_shentsize, e_shnum=e_shnum, e_shstrndx=e_shstrndx)
+                e_version=e_version.integer, e_entry=e_entry.integer,
+                e_phoff=e_phoff.integer, e_shoff=e_shoff.integer,
+                e_flags=e_flags.integer, e_ehsize=e_ehsize.integer,
+                e_phentsize=e_phentsize.integer, e_phnum=e_phnum.integer,
+                e_shentsize=e_shentsize.integer, e_shnum=e_shnum.integer,
+                e_shstrndx=e_shstrndx.integer)
         return Ehdr, b
 
 
@@ -425,6 +427,34 @@ class Elf32_Phdr:
         return '%s(%s, %s, %s, %s, %s, %s, %s, %s)' % (type(self).__name__,
                 self.p_type, self.p_flags, self.p_offset, self.p_vaddr,
                 self.p_paddr, self.p_filesz, self.p_memsz, self.p_align)
+
+    def __bytes__(self):
+        p_type = uint32(self.p_type, little=self.little)
+        p_flags = uint32(self.p_flags, little=self.little)
+        p_offset = uint32(self.p_offset, little=self.little)
+        p_vaddr = uint32(self.p_vaddr, little=self.little)
+        p_paddr = uint32(self.p_paddr, little=self.little)
+        p_filesz = uint32(self.p_filesz, little=self.little)
+        p_memsz = uint32(self.p_memsz, little=self.little)
+        p_align = uint32(self.p_align, little=self.little)
+
+        return bytes(p_type) + bytes(p_flags) + bytes(p_offset) + \
+                bytes(p_vaddr) + bytes(p_paddr) + bytes(p_filesz) + \
+                bytes(p_memsz) + bytes(p_align)
+
+    def from_bytes(b, little=False):
+        p_type, b = uint32.from_bytes(b, little)
+        p_flags, b = uint32.from_bytes(b, little)
+        p_offset, b = uint32.from_bytes(b, little)
+        p_vaddr, b = uint32.from_bytes(b, little)
+        p_paddr, b = uint32.from_bytes(b, little)
+        p_filesz, b = uint32.from_bytes(b, little)
+        p_memsz, b = uint32.from_bytes(b, little)
+        p_align, b = uint32.from_bytes(b, little)
+
+        return Elf32_Phdr(p_type=p_type, p_flags=p_flags, p_offset=p_offset,
+                p_vaddr=p_vaddr, p_paddr=p_paddr, p_filesz=p_filesz,
+                p_memsz=p_memsz, p_align=p_align), b
 
 
 if __name__ == '__main__':
