@@ -119,6 +119,8 @@ class Elf32_e_ident:
         return Elf32_e_ident(EI_MAG=EI_MAG, EI_CLASS=EI_CLASS, EI_DATA=EI_DATA,
                 EI_VERSION=EI_VERSION, EI_OSABI=EI_OSABI), b
 
+    def __len__(self):
+        return len(bytes(self))
 
 """e_type enumeration"""
 class ET(Enum):
@@ -401,6 +403,9 @@ class Elf32_Ehdr:
                 e_shstrndx=e_shstrndx.integer)
         return Ehdr, b
 
+    def __len__(self):
+        return len(bytes(self))
+
 
 class Elf32_Phdr:
 
@@ -455,6 +460,9 @@ class Elf32_Phdr:
         return Elf32_Phdr(p_type=p_type, p_flags=p_flags, p_offset=p_offset,
                 p_vaddr=p_vaddr, p_paddr=p_paddr, p_filesz=p_filesz,
                 p_memsz=p_memsz, p_align=p_align), b
+
+    def __len__(self):
+        return len(bytes(self))
 
 
 if __name__ == '__main__':
