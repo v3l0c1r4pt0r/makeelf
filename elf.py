@@ -400,6 +400,31 @@ class Elf32_Ehdr:
         return Ehdr, b
 
 
+class Elf32_Phdr:
+
+    def __init__(self, p_type=0, p_flags=0, p_offset=0, p_vaddr=0, p_paddr=0,
+            p_filesz=0, p_memsz=0, p_align=0):
+        self.p_type = p_type
+        self.p_flags = p_flags
+        self.p_offset = p_offset
+        self.p_vaddr = p_vaddr
+        self.p_paddr = p_paddr
+        self.p_filesz = p_filesz
+        self.p_memsz = p_memsz
+        self.p_align = p_align
+
+    def __str__(self):
+        return '{p_type=%s, p_flags=%s, p_offset=%s, p_vaddr=%s, p_paddr=%s, '\
+                'p_filesz=%s, p_memsz=%s, p_align=%s}' % (self.p_type,
+                        self.p_flags, self.p_offset, self.p_vaddr, self.p_paddr,
+                        self.p_filesz, self.p_memsz, self.p_align)
+
+    def __repr__(self):
+        return '%s(%s, %s, %s, %s, %s, %s, %s, %s)' % (type(self).__name__,
+                self.p_type, self.p_flags, self.p_offset, self.p_vaddr,
+                self.p_paddr, self.p_filesz, self.p_memsz, self.p_align)
+
+
 if __name__ == '__main__':
     print('tests')
     print('obj->file')
