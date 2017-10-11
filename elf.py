@@ -466,6 +466,39 @@ class Elf32_Phdr:
         return len(bytes(self))
 
 
+class Elf32_Shdr:
+
+    def __init__(self, sh_name=0, sh_type=0, sh_flags=0, sh_addr=0, sh_offset=0,
+            sh_size=0, sh_link=0, sh_info=0, sh_addralign=0, sh_entsize=0,
+            little=False):
+        self.sh_name = sh_name
+        self.sh_type = sh_type
+        self.sh_flags = sh_flags
+        self.sh_addr = sh_addr
+        self.sh_offset = sh_offset
+        self.sh_size = sh_size
+        self.sh_link = sh_link
+        self.sh_info = sh_info
+        self.sh_addralign = sh_addralign
+        self.sh_entsize = sh_entsize
+
+        self.little = little
+
+    def __str__(self):
+        return '{sh_name=%s, sh_type=%s, sh_flags=%s, sh_addr=%s, '\
+                'sh_offset=%s, sh_size=%s, sh_link=%s, sh_info=%s, '\
+                'sh_addralign=%s, sh_entsize=%s}' % (self.sh_name, self.sh_type,
+                        self.sh_flags, self.sh_addr, self.sh_offset,
+                        self.sh_size, self.sh_link, self.sh_info,
+                        self.sh_addralign, self.sh_entsize)
+
+    def __repr__(self):
+        return '%s(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)' % \
+    (type(self).__name__, self.sh_name, self.sh_type, self.sh_flags,
+            self.sh_addr, self.sh_offset, self.sh_size, self.sh_link,
+            self.sh_info, self.sh_addralign, self.sh_entsize)
+
+
 if __name__ == '__main__':
     print('tests')
     print('obj->file')
