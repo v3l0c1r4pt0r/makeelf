@@ -49,7 +49,6 @@ define sh_entsize 4
 
 let cursor=$e_shoff_b
 for i in $(seq 1 $e_shnum_b); do
-  echo $i;
   use sh_name
   use sh_type
   use sh_flags
