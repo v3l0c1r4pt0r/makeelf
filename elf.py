@@ -457,9 +457,10 @@ class Elf32_Phdr:
         p_memsz, b = uint32.from_bytes(b, little)
         p_align, b = uint32.from_bytes(b, little)
 
-        return Elf32_Phdr(p_type=p_type, p_flags=p_flags, p_offset=p_offset,
-                p_vaddr=p_vaddr, p_paddr=p_paddr, p_filesz=p_filesz,
-                p_memsz=p_memsz, p_align=p_align), b
+        return Elf32_Phdr(p_type=p_type.integer, p_flags=p_flags.integer,
+                p_offset=p_offset.integer, p_vaddr=p_vaddr.integer,
+                p_paddr=p_paddr.integer, p_filesz=p_filesz.integer,
+                p_memsz=p_memsz.integer, p_align=p_align.integer), b
 
     def __len__(self):
         return len(bytes(self))
