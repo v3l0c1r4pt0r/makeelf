@@ -555,15 +555,42 @@ if __name__ == '__main__':
         Ehdr, b = Elf32_Ehdr.from_bytes(b)
         print(Ehdr)
         print(b[:32])
+
     print('full parse microblaze_0.elf')
     fd = os.open('microblaze_0.elf', os.O_RDONLY)
     blob = os.read(fd, 0xffff)
     b = blob
     os.close(fd)
+
+    # Ehdr
     Ehdr, b = Elf32_Ehdr.from_bytes(b)
     print(Ehdr)
+
+    # Phdr
     Phdr_a = []
     for i in range(Ehdr.e_phnum):
         Phdr, b = Elf32_Phdr.from_bytes(b)
         Phdr_a.append(Phdr)
-    print(Phdr_a)
+    print(' Phdr table:')
+    for i, Phdr in enumerate(Phdr_a):
+        print('Phdr #%d: %s' % (i, Phdr))
+
+    # Shdr
+    Shdr_a = []
+    b = blob[Ehdr.e_shoff:]
+    for i in range(Ehdr.e_shnum):
+        Shdr, b = Elf32_Shdr.from_bytes(b)
+        Shdr_a.append(Shdr)
+
+    # .shstr
+    Shdr_shstr = Shdr_a[Ehdr.e_shstrndx]
+    shstr_start = Shdr_shstr.sh_offset
+    shstr_end = shstr_start + Shdr_shstr.sh_size
+    print(Shdr_shstr)
+    shstr = blob[shstr_start:shstr_end]
+
+    print(' Shdr table:')
+    for i, Shdr in enumerate(Shdr_a):
+        Shdr_name = shstr[Shdr.sh_name:]
+        Shdr_name = Shdr_name[:Shdr_name.index(b'\x00')].decode('utf-8')
+        print('Shdr #%d (%s): %s' % (i, Shdr_name, Shdr))
