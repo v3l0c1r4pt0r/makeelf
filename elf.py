@@ -486,3 +486,15 @@ if __name__ == '__main__':
         Ehdr, b = Elf32_Ehdr.from_bytes(b)
         print(Ehdr)
         print(b[:32])
+    print('full parse microblaze_0.elf')
+    fd = os.open('microblaze_0.elf', os.O_RDONLY)
+    blob = os.read(fd, 0xffff)
+    b = blob
+    os.close(fd)
+    Ehdr, b = Elf32_Ehdr.from_bytes(b)
+    print(Ehdr)
+    Phdr_a = []
+    for i in range(Ehdr.e_phnum):
+        Phdr, b = Elf32_Phdr.from_bytes(b)
+        Phdr_a.append(Phdr)
+    print(Phdr_a)
