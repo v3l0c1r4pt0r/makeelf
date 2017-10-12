@@ -4,6 +4,7 @@ from type.enum import Enum
 from type.align import align,unalign
 from type.uint16 import uint16
 from type.uint32 import uint32
+import utils
 
 """EI_CLASS enumeration"""
 class ELFCLASS(Enum):
@@ -570,7 +571,39 @@ class Elf32:
                 self.Phdr_table, self.Shdr_table)
 
     def __bytes__(self):
-        return None
+        headers = {}
+        headers[0] = bytes(self.Ehdr)
+
+        # Phdrs
+        cursor = self.Ehdr.e_phoff
+        for Phdr in self.Phdr_table:
+            headers[cursor] = Phdr
+            cursor += self.Ehdr.e_phentsize
+
+        # Shdrs
+        cursor = self.Ehdr.e_shoff
+        for Shdr in self.Shdr_table:
+            headers[cursor] = Shdr
+            cursor += self.Ehdr.e_shentsize
+
+        # TODO: sections
+
+        # find file size
+        end_of_file = sorted(headers.keys())[-1]
+        end_of_file += len(headers[end_of_file])
+
+        # create and populate buffer
+        b = bytes(end_of_file)
+        for off in headers:
+            hdr = headers[off]
+            size = len(hdr)
+
+            # expand to file size
+            aligned = align(bytes(off) + bytes(hdr), end_of_file)
+
+            # xor into b
+            b = utils.bytes_xor(b, aligned)
+        return b
 
     def from_bytes(b, little=False):
         return None, b
