@@ -499,16 +499,16 @@ class Elf32_Shdr:
             self.sh_info, self.sh_addralign, self.sh_entsize)
 
     def __bytes__(self):
-        sh_name = uint32(self.sh_name)
-        sh_type = uint32(self.sh_type)
-        sh_flags = uint32(self.sh_flags)
-        sh_addr = uint32(self.sh_addr)
-        sh_offset = uint32(self.sh_offset)
-        sh_size = uint32(self.sh_size)
-        sh_link = uint32(self.sh_link)
-        sh_info = uint32(self.sh_info)
-        sh_addralign = uint32(self.sh_addralign)
-        sh_entsize = uint32(self.sh_entsize)
+        sh_name = uint32(self.sh_name, little=self.little)
+        sh_type = uint32(self.sh_type, little=self.little)
+        sh_flags = uint32(self.sh_flags, little=self.little)
+        sh_addr = uint32(self.sh_addr, little=self.little)
+        sh_offset = uint32(self.sh_offset, little=self.little)
+        sh_size = uint32(self.sh_size, little=self.little)
+        sh_link = uint32(self.sh_link, little=self.little)
+        sh_info = uint32(self.sh_info, little=self.little)
+        sh_addralign = uint32(self.sh_addralign, little=self.little)
+        sh_entsize = uint32(self.sh_entsize, little=self.little)
 
         return bytes(sh_name) + bytes(sh_type) + bytes(sh_flags) + \
                 bytes(sh_addr) + bytes(sh_offset) + bytes(sh_size) + \
@@ -516,16 +516,17 @@ class Elf32_Shdr:
                 bytes(sh_entsize)
 
     def from_bytes(b, little=False):
-        sh_name, b = uint32.from_bytes(b)
-        sh_type, b = uint32.from_bytes(b)
-        sh_flags, b = uint32.from_bytes(b)
-        sh_addr, b = uint32.from_bytes(b)
-        sh_offset, b = uint32.from_bytes(b)
-        sh_size, b = uint32.from_bytes(b)
-        sh_link, b = uint32.from_bytes(b)
-        sh_info, b = uint32.from_bytes(b)
-        sh_addralign, b = uint32.from_bytes(b)
-        sh_entsize, b = uint32.from_bytes(b)
+        sh_name, b = uint32.from_bytes(b, little=little)
+        sh_type, b = uint32.from_bytes(b, little=little)
+        sh_flags, b = uint32.from_bytes(b, little=little)
+        sh_addr, b = uint32.from_bytes(b, little=little)
+        sh_offset, b = uint32.from_bytes(b, little=little)
+        sh_size, b = uint32.from_bytes(b, little=little)
+        sh_link, b = uint32.from_bytes(b, little=little)
+        sh_info, b = uint32.from_bytes(b, little=little)
+        sh_addralign, b = uint32.from_bytes(b, little=little)
+        sh_entsize, b = uint32.from_bytes(b, little=little)
+
         return Elf32_Shdr(sh_name.integer, sh_type.integer, sh_flags.integer,
                 sh_addr.integer, sh_offset.integer, sh_size.integer,
                 sh_link.integer, sh_info.integer, sh_addralign.integer,
