@@ -562,10 +562,12 @@ class Elf32:
             raise Exception('Shdr table must be a list of Elf32_Shdr objects')
 
     def __str__(self):
-        return '{}' % ()
+        return '{Ehdr=%s, Phdr_table=%s, Shdr_table=%s}' % (self.Ehdr,
+                self.Phdr_table, self.Shdr_table)
 
     def __repr__(self):
-        return '%s()' % (type(self).__name__)
+        return '%s(%s, %s, %s)' % (type(self).__name__, self.Ehdr,
+                self.Phdr_table, self.Shdr_table)
 
     def __bytes__(self):
         return None
