@@ -536,6 +536,32 @@ class Elf32_Shdr:
         return len(bytes(self))
 
 
+class Elf32:
+    """Complete ELF structure storage class
+
+    Allows to craft ELF file using low-level interfaces for manipulating data
+    fields and accessing headers contained inside. This class is not meant to
+    provide any abstraction on top of ELF structure"""
+
+    def __init__(self, Ehdr=None, Phdr_table=None, Shdr_table=None, little=False):
+        pass
+
+    def __str__(self):
+        return '{}' % ()
+
+    def __repr__(self):
+        return '%s()' % (type(self).__name__)
+
+    def __bytes__(self):
+        return None
+
+    def from_bytes(b, little=False):
+        return None, b
+
+    def __len__(self):
+        return len(bytes(self))
+
+
 if __name__ == '__main__':
     print('tests')
     print('obj->file')
