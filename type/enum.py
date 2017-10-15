@@ -49,10 +49,10 @@ class Enum(IntEnum):
         max_val = type(self)._max_value()
         field_width = Enum._field_width(0, max_val)
         b = Enum._value_as_bytes(int(self))
-        if sys.byteorder == 'little':
-            b = bytes(reversed(b))
         # if last set byte is less than width of the field, align
         b = align(b, field_width)
+        if sys.byteorder == 'little':
+            b = bytes(reversed(b))
         return b
 
     @classmethod
