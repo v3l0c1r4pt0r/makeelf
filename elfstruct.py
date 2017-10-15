@@ -467,13 +467,47 @@ class Elf32_Phdr:
         return len(bytes(self))
 
 
+class SHT(Enum):
+    """Valid values for sh_type field"""
+    SHT_NULL = 0
+    SHT_PROGBITS = 1
+    SHT_SYMTAB = 2
+    SHT_STRTAB = 3
+    SHT_RELA = 4
+    SHT_HASH = 5
+    SHT_DYNAMIC = 6
+    SHT_NOTE = 7
+    SHT_NOBITS = 8
+    SHT_REL = 9
+    SHT_SHLIB = 10
+    SHT_DYNSYM = 11
+    SHT_INIT_ARRAY = 14
+    SHT_FINI_ARRAY = 15
+    SHT_PREINIT_ARRAY = 16
+    SHT_GROUP = 17
+    SHT_SYMTAB_SHNDX = 18
+    SHT_LOOS = 0x60000000
+    SHT_HIOS = 0x6fffffff
+    SHT_LOPROC = 0x70000000
+    SHT_HIPROC = 0x7fffffff
+    SHT_LOUSER = 0x80000000
+    SHT_HIUSER = 0xffffffff
+
+
 class Elf32_Shdr:
 
-    def __init__(self, sh_name=0, sh_type=0, sh_flags=0, sh_addr=0, sh_offset=0,
-            sh_size=0, sh_link=0, sh_info=0, sh_addralign=0, sh_entsize=0,
-            little=False):
+    def __init__(self, sh_name=0, sh_type=SHT.SHT_NULL, sh_flags=0, sh_addr=0,
+            sh_offset=0, sh_size=0, sh_link=0, sh_info=0, sh_addralign=0,
+            sh_entsize=0, little=False):
         self.sh_name = sh_name
-        self.sh_type = sh_type
+
+        if isinstance(sh_type, SHT):
+            self.sh_type = sh_type
+        elif sh_type in map(int, SHT):
+            self.sh_type = SHT(sh_type)
+        else:
+            self.sh_type = SHT[sh_type]
+
         self.sh_flags = sh_flags
         self.sh_addr = sh_addr
         self.sh_offset = sh_offset
@@ -501,7 +535,7 @@ class Elf32_Shdr:
 
     def __bytes__(self):
         sh_name = uint32(self.sh_name, little=self.little)
-        sh_type = uint32(self.sh_type, little=self.little)
+        sh_type = self.sh_type
         sh_flags = uint32(self.sh_flags, little=self.little)
         sh_addr = uint32(self.sh_addr, little=self.little)
         sh_offset = uint32(self.sh_offset, little=self.little)
