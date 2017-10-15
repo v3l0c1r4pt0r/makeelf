@@ -6,28 +6,28 @@ from type.uint16 import uint16
 from type.uint32 import uint32
 import utils
 
-"""EI_CLASS enumeration"""
 class ELFCLASS(Enum):
+    """EI_CLASS enumeration"""
     ELFCLASSNONE = 0
     ELFCLASS32 = 1
     ELFCLASS64 = 2
 
 
-"""EI_DATA enumeration"""
 class ELFDATA(Enum):
+    """EI_DATA enumeration"""
     ELFDATANONE = 0
     ELFDATA2LSB = 1
     ELFDATA2MSB = 2
 
 
-"""EI_VERSION enumeration"""
 class EV(Enum):
+    """EI_VERSION enumeration"""
     EV_NONE = 0
     EV_CURRENT = 1
 
 
-"""EI_OSABI enumeration"""
 class ELFOSABI(Enum):
+    """EI_OSABI enumeration"""
     ELFOSABI_NONE = 0
     ELFOSABI_HPUX = 1
     ELFOSABI_NETBSD = 2
@@ -123,8 +123,8 @@ class Elf32_e_ident:
     def __len__(self):
         return len(bytes(self))
 
-"""e_type enumeration"""
 class ET(Enum):
+    """e_type enumeration"""
     ET_NONE = 0
     ET_REL = 1
     ET_EXEC = 2
@@ -136,8 +136,8 @@ class ET(Enum):
     ET_HIPROC = 0xffff
 
 
-"""e_machine enumeration"""
 class EM(Enum):
+    """e_machine enumeration"""
     EM_NONE = 0
     EM_M32 = 1
     EM_SPARC = 2
