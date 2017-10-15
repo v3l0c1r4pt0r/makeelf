@@ -40,3 +40,16 @@ class ELF:
     def from_bytes(b):
         """Deserializes ELF from block of bytes"""
         return Elf32.from_bytes(b)
+
+    def append_section(self, sec_name, sec_data, sec_addr):
+        """Add new section to ELF file
+
+        Name is automatically appended to .shstrtab section"""
+        pass
+
+    def append_special_section(self, sec_name, sec_data):
+        """Add new special section to ELF file
+
+        This function allows to add one of the special, structured sections to
+        ELF file. Name is automatically appended to .shstrtab section"""
+        pass
