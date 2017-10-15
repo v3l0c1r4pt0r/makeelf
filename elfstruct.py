@@ -704,3 +704,25 @@ if __name__ == '__main__':
         Shdr_name = shstr[Shdr.sh_name:]
         Shdr_name = Shdr_name[:Shdr_name.index(b'\x00')].decode('utf-8')
         print('Shdr #%d (%s): %s' % (i, Shdr_name, Shdr))
+
+    print('Rewrite existing ELF from one file to another')
+    fd = os.open('microblaze_0.elf', os.O_RDONLY)
+    b = os.read(fd, 0xffff)
+    os.close(fd)
+    Elf,b=Elf32.from_bytes(b)
+    print(Elf)
+    fd=os.open('test.elf', os.O_WRONLY | os.O_CREAT | os.O_TRUNC)
+    os.write(fd, bytes(Elf))
+    os.close(fd)
+
+    print('test')
+    fd = os.open('microblaze_0.elf', os.O_RDONLY)
+    src = os.read(fd, 0xffff)
+    os.close(fd)
+    fd = os.open('test.elf', os.O_RDONLY)
+    dst = os.read(fd, 0xffff)
+    os.close(fd)
+    if src == dst:
+        print('OK')
+    else:
+        print('FAIL')
