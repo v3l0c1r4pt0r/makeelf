@@ -615,7 +615,31 @@ class Elf32:
         return b
 
     def from_bytes(b, little=False):
-        return None, b
+        blob = b
+        Ehdr, b = Elf32_Ehdr.from_bytes(b)
+
+        # Program headers
+        Phdr_a = []
+        for i in range(Ehdr.e_phnum):
+            Phdr, b = Elf32_Phdr.from_bytes(b)
+            Phdr_a.append(Phdr)
+
+        # Section headers
+        Shdr_a = []
+        b = blob[Ehdr.e_shoff:]
+        for i in range(Ehdr.e_shnum):
+            Shdr, b = Elf32_Shdr.from_bytes(b)
+            Shdr_a.append(Shdr)
+
+        # Sections
+        sections = []
+        for i, Shdr in enumerate(Shdr_a):
+            first = Shdr.sh_offset
+            last = first + Shdr.sh_size
+            section = blob[first:last]
+            sections.append(section)
+
+        return Elf32(Ehdr, Phdr_a, Shdr_a, sections), None
 
     def __len__(self):
         return len(bytes(self))
