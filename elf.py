@@ -13,6 +13,7 @@ class ELF:
             e_type=ET.ET_EXEC, e_machine=EM.EM_NONE):
         if e_class == ELFCLASS.ELFCLASS32:
             cls = Elf32
+            hdr = Elf32_Ehdr
         else:
             raise Exception('ELF class %s currently unsupported' % e_class)
 
@@ -23,8 +24,8 @@ class ELF:
         else:
             little = sys.byteorder == 'little'
 
-        self.Elf = cls(e_ident=Elf32_e_ident(EI_CLASS=e_class, EI_DATA=e_data),
-                e_type=e_type, e_machine=e_machine, little=little)
+        self.Elf = cls(Ehdr=hdr(e_ident=Elf32_e_ident(EI_CLASS=e_class, EI_DATA=e_data),
+                e_type=e_type, e_machine=e_machine, little=little))
 
     def __str__(self):
         return str(self.Elf)
