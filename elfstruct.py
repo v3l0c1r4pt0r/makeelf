@@ -569,12 +569,12 @@ class Elf32:
             raise Exception('Sections must be a list containing section content')
 
     def __str__(self):
-        return '{Ehdr=%s, Phdr_table=%s, Shdr_table=%s}' % (self.Ehdr,
-                self.Phdr_table, self.Shdr_table)
+        return '{Ehdr=%s, Phdr_table=%s, Shdr_table=%s, sections=%s}' % \
+                (self.Ehdr, self.Phdr_table, self.Shdr_table, self.sections)
 
     def __repr__(self):
-        return '%s(%s, %s, %s)' % (type(self).__name__, self.Ehdr,
-                self.Phdr_table, self.Shdr_table)
+        return '%s(%s, %s, %s, %s)' % (type(self).__name__, self.Ehdr,
+                self.Phdr_table, self.Shdr_table, self.sections)
 
     def __bytes__(self):
         headers = {}
