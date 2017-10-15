@@ -546,6 +546,15 @@ class Elf32:
 
     def __init__(self, Ehdr=None, Phdr_table=None, Shdr_table=None,
             sections=None, little=False):
+        if Ehdr is None:
+            Ehdr = Elf32_Ehdr()
+        if Phdr_table is None:
+            Phdr_table = []
+        if Shdr_table is None:
+            Shdr_table = []
+        if sections is None:
+            sections = []
+
         if isinstance(Ehdr, Elf32_Ehdr):
             self.Ehdr = Ehdr
         else:
