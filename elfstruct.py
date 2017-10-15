@@ -544,7 +544,8 @@ class Elf32:
     fields and accessing headers contained inside. This class is not meant to
     provide any abstraction on top of ELF structure"""
 
-    def __init__(self, Ehdr=None, Phdr_table=None, Shdr_table=None, little=False):
+    def __init__(self, Ehdr=None, Phdr_table=None, Shdr_table=None,
+            sections=None, little=False):
         if isinstance(Ehdr, Elf32_Ehdr):
             self.Ehdr = Ehdr
         else:
@@ -556,11 +557,16 @@ class Elf32:
         else:
             raise Exception('Phdr table must be a list of Elf32_Phdr objects')
 
-        if isinstance(Shdr_table, Elf32_Shdr) and (len(Shdr_table) is 0) or (
+        if isinstance(Shdr_table, list) and (len(Shdr_table) is 0) or (
                 isinstance(Shdr_table[0], Elf32_Shdr)):
             self.Shdr_table = Shdr_table
         else:
             raise Exception('Shdr table must be a list of Elf32_Shdr objects')
+
+        if isinstance(sections, list):
+            self.sections = sections
+        else:
+            raise Exception('Sections must be a list containing section content')
 
     def __str__(self):
         return '{Ehdr=%s, Phdr_table=%s, Shdr_table=%s}' % (self.Ehdr,
@@ -586,7 +592,10 @@ class Elf32:
             headers[cursor] = Shdr
             cursor += self.Ehdr.e_shentsize
 
-        # TODO: sections
+        # sections
+        for i, Shdr in enumerate(self.Shdr_table):
+            if len(self.sections[i]) != 0:
+                headers[Shdr.sh_offset] = self.sections[i]
 
         # find file size
         end_of_file = sorted(headers.keys())[-1]
