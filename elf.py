@@ -2,6 +2,41 @@
 # module for high-level manipulation of ELF files
 from elfstruct import *
 
+class _Strtab:
+    """Helper class for creating sections of type SHT_STRTAB
+
+    Guards general rules and allows appending new strings"""
+
+    def __init__(self):
+        self.blob = b'\0'
+
+    def __str__(self):
+        return str(self.blob)
+
+    def __repr__(self):
+        return repr(self.blob)
+
+    def __bytes__(self):
+        return self.blob
+
+    def __len__(self):
+        return len(self.blob)
+
+    def append(self, string):
+        """Appends string to the end of section
+
+        Returns offset of newly appended string"""
+
+        # TODO: check if string does not contain any NULLs
+
+        if isinstance(string, str):
+            string = bytes(string, 'utf-8')
+
+        ret = len(self.blob)
+        self.blob += string + b'\0'
+        return ret
+
+
 class ELF:
     """This class is a wrapper on ELF structures provided by elfstruct module
     
