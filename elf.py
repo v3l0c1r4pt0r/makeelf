@@ -69,7 +69,47 @@ class ELF:
         return repr(self.Elf)
 
     def __bytes__(self):
-        """Serialize ELF object into block of bytes"""
+        """Serialize ELF object into block of bytes
+
+        Makes some header updates and serializes object to file, so output
+        should always be valid ELF file"""
+        cursor = len(self.Elf.Ehdr)
+
+        # update offsets in Ehdr regarding Phdrs
+        if len(self.Elf.Phdr_table) > 0:
+            Phdr_len = 0
+            for Phdr in self.Elf.Phdr_table:
+                Phdr_len += len(Phdr)
+            self.Elf.Ehdr.e_phoff = cursor
+            self.Elf.Ehdr.e_phentsize = len(self.Elf.Phdr_table[0])
+            self.Elf.Ehdr.e_phnum = len(self.Elf.Phdr_table)
+            cursor += Phdr_len
+        else:
+            self.Elf.Ehdr.e_phoff = 0
+            self.Elf.Ehdr.e_phentsize = 0
+            self.Elf.Ehdr.e_phnum = 0
+
+        # update offsets in Ehdr regarding Shdrs
+        if len(self.Elf.Shdr_table) > 0:
+            Shdr_len = 0
+            for Shdr in self.Elf.Shdr_table:
+                Shdr_len += len(Shdr)
+            self.Elf.Ehdr.e_shoff = cursor
+            self.Elf.Ehdr.e_shentsize = len(self.Elf.Shdr_table[0])
+            self.Elf.Ehdr.e_shnum = len(self.Elf.Shdr_table)
+            cursor += Shdr_len
+        else:
+            self.Elf.Ehdr.e_shoff = 0
+            self.Elf.Ehdr.e_shentsize = 0
+            self.Elf.Ehdr.e_shnum = 0
+
+        # update section offsets in section headers
+        for i, Shdr in enumerate(self.Elf.Shdr_table):
+            section_len = len(self.Elf.sections[i])
+            Shdr.sh_offset = cursor
+            Shdr.sh_size = section_len
+            cursor += section_len
+
         return bytes(self.Elf)
 
     def from_bytes(b):
