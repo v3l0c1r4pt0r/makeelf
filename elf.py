@@ -62,6 +62,25 @@ class ELF:
         self.Elf = cls(Ehdr=hdr(e_ident=Elf32_e_ident(EI_CLASS=e_class, EI_DATA=e_data),
                 e_type=e_type, e_machine=e_machine, little=little))
 
+        # create empty section entry
+        undef_section = Elf32_Shdr()
+        self.Elf.Shdr_table.append(undef_section)
+        self.Elf.sections.append(b'')
+
+        # create .shstrtab section and store its name in itself
+        shstrtab = _Strtab()
+        shstrtab_name = shstrtab.append('.shstrtab')
+
+        # add .shstrtab into section header and section list
+        shstrtab_hdr = Elf32_Shdr(sh_name=shstrtab_name, sh_type=SHT.SHT_STRTAB,
+                sh_addralign=1)
+        self.Elf.Shdr_table.append(shstrtab_hdr)
+        self.Elf.sections.append(shstrtab) # this is ok, as long as shstrtab has
+        # bytes() implementation
+
+        # adjust e_shstrndx
+        self.Elf.e_shstrndx = len(self.Elf.Shdr_table) - 1
+
     def __str__(self):
         return str(self.Elf)
 
