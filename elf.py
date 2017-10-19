@@ -79,7 +79,7 @@ class ELF:
         # bytes() implementation
 
         # adjust e_shstrndx
-        self.Elf.e_shstrndx = len(self.Elf.Shdr_table) - 1
+        self.Elf.Ehdr.e_shstrndx = len(self.Elf.Shdr_table) - 1
 
     def __str__(self):
         return str(self.Elf)
@@ -146,4 +146,15 @@ class ELF:
 
         This function allows to add one of the special, structured sections to
         ELF file. Name is automatically appended to .shstrtab section"""
+        pass
+
+    def append_segment(self, sec_id, addr=None, mem_size=-1, flags='rwx'):
+        """Add new program header, desribing segment in memory
+
+        This function is for executable and shared objects only. On other types
+        of ELFs causes exception. Currently appended segment can only be of type
+        PT_LOAD.
+            sec_id   - id of section already describing this segment
+            addr     - virtual address at which segment will be loaded
+            mem_size - size of segment after loading into memory"""
         pass
