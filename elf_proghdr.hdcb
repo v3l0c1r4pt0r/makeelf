@@ -45,12 +45,17 @@ define p_align $wlen
 
 for i in $(seq 1 $e_phnum_b); do
   use p_type
-  use p_flags
+  if [ $wlen -eq 8 ]; then
+    use p_flags
+  fi;
   use p_offset
   use p_vaddr
   use p_paddr
   use p_filesz
   use p_memsz
+  if [ $wlen -eq 4 ]; then
+    use p_flags
+  fi;
   use p_align
 done;
 
