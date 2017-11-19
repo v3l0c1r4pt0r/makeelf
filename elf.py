@@ -160,3 +160,14 @@ class ELF:
             addr     - virtual address at which segment will be loaded
             mem_size - size of segment after loading into memory"""
         pass
+
+    def _append_segment(self, ptype, vaddr, paddr, file_size, mem_size, flags=0):
+        # create instance of Phdr
+        Phdr = Elf32_Phdr(p_type=ptype, p_offset=0, p_vaddr=vaddr,
+                p_paddr=paddr, p_filesz=file_size, p_memsz=mem_size,
+                p_flags=flags, p_align=1, little=self.little)
+
+        # add Phdr to elf object
+        ret = len(self.Elf.Phdr_table)
+        self.Elf.Phdr_table.append(Phdr)
+        return ret
