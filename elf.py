@@ -140,6 +140,35 @@ class ELF:
         """Deserializes ELF from block of bytes"""
         return Elf32.from_bytes(b)
 
+    def get_section_by_name(self, sec_name):
+        """Returns section header and content as tuple, based on their name"""
+        if isinstance(sec_name, str):
+            sec_name = bytes(sec_name, 'utf-8')
+        elif not isinstance(sec_name, bytes):
+            sec_name = bytes(sec_name)
+        shstrtab_idx = self.Elf.Ehdr.e_shstrndx
+        shstrtab_hdr = self.Elf.Shdr_table[shstrtab_idx]
+        shstrtab = self.Elf.sections[shstrtab_idx]
+
+        # shortcut if looking for .shstrtab
+        if sec_name is '.shstrtab':
+            return (shstrtab_hdr, shstrtab)
+
+        # find string in .shstrtab
+        name_off = shstrtab.blob.find(sec_name)
+        if name_off is -1:
+            raise Exception('Section "%s" not in ELF' % \
+                    sec_name.decode('utf-8'))
+
+        # find header with sh_name equal offset
+        for i, shdr in enumerate(self.Elf.Shdr_table):
+            if shdr.sh_name == name_off:
+                section = self.Elf.sections[i]
+                return (shdr, section)
+        raise Exception('Section "%s" found in .shstrtab at offset %d, but no'\
+                'header with that name found. ELF internal structure '\
+                'damaged.' % (sec_name.decode('utf-8'), name_off))
+
     def append_section(self, sec_name, sec_data, sec_addr):
         """Add new section to ELF file
 
