@@ -449,6 +449,15 @@ class PT(Enum):
     PT_S390_PGSTE = 0x70000000
 
 
+class PF(Enum):
+    # FIXME: should be bitmap in future, not enum
+    PF_X = 0x01
+    PF_W = 0x02
+    PF_R = 0x04
+    PF_MASKOS = 0x0ff00000
+    PF_MASKPROC = 0xf0000000
+
+
 class Elf32_Phdr:
 
     def __init__(self, p_type=0, p_offset=0, p_vaddr=0, p_paddr=0, p_filesz=0,
