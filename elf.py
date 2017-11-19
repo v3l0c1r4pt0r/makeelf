@@ -224,7 +224,34 @@ class ELF:
             sec_id   - id of section already describing this segment
             addr     - virtual address at which segment will be loaded
             mem_size - size of segment after loading into memory"""
-        pass
+        if self.Elf.Ehdr.e_type not in [ET.ET_EXEC, ET.ET_DYN]:
+            raise Exception('ELF type is not executable neither shared (e_type'\
+                    ' is %s)' % self.hdr.e_type)
+
+        # extract section from section list
+        Shdr = self.Elf.Shdr_table[sec_id]
+
+        # set address to this of section linked if default
+        if addr is None:
+            addr = Shdr.sh_addr
+
+        # set memory size to this of section linked if default
+        if mem_size == -1:
+            mem_size = Shdr.sh_size
+
+        # create p_flags, based on flags parameter
+        # FIXME: if flags is instance of bitmap
+        p_flags = 0
+        if 'r' in flags:
+            p_flags |= PF.PF_R
+        if 'w' in flags:
+            p_flags |= PF.PF_W
+        if 'x' in flags:
+            p_flags |= PF.PF_X
+
+        # call internal adder interface
+        return self._append_segment(ptype=PT.PT_LOAD, vaddr=addr, paddr=0,
+                file_size=Shdr.sh_size, mem_size=mem_size, flags=p_flags)
 
     def _append_segment(self, ptype, vaddr, paddr, file_size, mem_size, flags=0):
         # create instance of Phdr
