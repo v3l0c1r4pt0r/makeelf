@@ -81,6 +81,11 @@ class ELF:
         # adjust e_shstrndx
         self.Elf.Ehdr.e_shstrndx = len(self.Elf.Shdr_table) - 1
 
+        # add dummy program header
+        if e_type in [ET.ET_EXEC, ET.ET_DYN]:
+            self._append_segment(ptype=PT.PT_LOAD, vaddr=0, paddr=0,
+                    file_size=0, mem_size=0, flags=int(PF.PF_R)|int(PF.PF_X))
+
     def __str__(self):
         return str(self.Elf)
 
