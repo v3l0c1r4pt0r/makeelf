@@ -138,22 +138,24 @@ class ELF:
     def append_section(self, sec_name, sec_data, sec_addr):
         """Add new section to ELF file
 
-        Name is automatically appended to .shstrtab section"""
-        pass
+        Name is automatically appended to .shstrtab section. Return value is ID
+        of newly added section"""
+        raise Exception('Not implemented')
 
     def append_special_section(self, sec_name, sec_data):
         """Add new special section to ELF file
 
         This function allows to add one of the special, structured sections to
-        ELF file. Name is automatically appended to .shstrtab section"""
-        pass
+        ELF file. Name is automatically appended to .shstrtab section. Return
+        value is ID of newly added section"""
+        raise Exception('Not implemented')
 
     def append_segment(self, sec_id, addr=None, mem_size=-1, flags='rwx'):
         """Add new program header, desribing segment in memory
 
         This function is for executable and shared objects only. On other types
         of ELFs causes exception. Currently appended segment can only be of type
-        PT_LOAD.
+        PT_LOAD. Return value is ID of newly added segment
             sec_id   - id of section already describing this segment
             addr     - virtual address at which segment will be loaded
             mem_size - size of segment after loading into memory"""
