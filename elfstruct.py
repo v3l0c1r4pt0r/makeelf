@@ -408,6 +408,47 @@ class Elf32_Ehdr:
         return len(bytes(self))
 
 
+class PT(Enum):
+    PT_NULL = 0
+    PT_LOAD = 1
+    PT_DYNAMIC = 2
+    PT_INTERP = 3
+    PT_NOTE = 4
+    PT_SHLIB = 5
+    PT_PHDR = 6
+    PT_TLS = 7
+    PT_LOOS = 0x60000000
+    PT_HIOS = 0x6fffffff
+    PT_LOPROC = 0x70000000
+    PT_HIPROC = 0x7fffffff
+    # The remaining values are not in the standard.
+    # Frame unwind information.
+    PT_GNU_EH_FRAME = 0x6474e550
+    PT_SUNW_EH_FRAME = 0x6474e550
+    # Stack flags.
+    PT_GNU_STACK = 0x6474e551
+    # Read only after relocation.
+    PT_GNU_RELRO = 0x6474e552
+    # Platform architecture compatibility information
+    PT_ARM_ARCHEXT = 0x70000000
+    # Exception unwind tables
+    PT_ARM_EXIDX = 0x70000001
+    # Register usage information.  Identifies one .reginfo section.
+    PT_MIPS_REGINFO =0x70000000
+    # Runtime procedure table.
+    PT_MIPS_RTPROC = 0x70000001
+    # .MIPS.options section.
+    PT_MIPS_OPTIONS = 0x70000002
+    # .MIPS.abiflags section.
+    PT_MIPS_ABIFLAGS = 0x70000003
+    # Platform architecture compatibility information
+    PT_AARCH64_ARCHEXT = 0x70000000
+    # Exception unwind tables
+    PT_AARCH64_UNWIND = 0x70000001
+    # 4k page table size
+    PT_S390_PGSTE = 0x70000000
+
+
 class Elf32_Phdr:
 
     def __init__(self, p_type=0, p_offset=0, p_vaddr=0, p_paddr=0, p_filesz=0,
