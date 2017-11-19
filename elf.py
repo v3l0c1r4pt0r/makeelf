@@ -174,7 +174,38 @@ class ELF:
 
         Name is automatically appended to .shstrtab section. Return value is ID
         of newly added section"""
-        raise Exception('Not implemented')
+        if isinstance(sec_data, str):
+            sec_data = bytes(sec_data, 'utf-8')
+        elif not isinstance(sec_data, bytes):
+            sec_data = bytes(sec_data)
+
+        # find .shstrtab
+        shstrtab_hdr, shstrtab = self.get_section_by_name('.shstrtab')
+
+        # create entry in section name section
+        name_off = shstrtab.append(sec_name)
+
+        # craft Shdr
+        shdr = Elf32_Shdr(sh_name=name_off, sh_type=SHT.SHT_PROGBITS,
+                sh_flags=0, sh_addr=sec_addr, sh_offset=0,
+                sh_size=len(sec_data), sh_link=0, sh_info=0, sh_addralign=1,
+                sh_entsize=0, little=self.little)
+
+        # save current section index
+        ret = len(self.Elf.Shdr_table)
+
+        # check header - blob consistency
+        if len(self.Elf.sections) is not ret:
+            raise Exception('section header list and section list are '\
+                    'inconsistent. Automatic section appending impossible')
+
+        # add header to ELF
+        self.Elf.Shdr_table.append(shdr)
+
+        # add section to list
+        self.Elf.sections.append(sec_data)
+
+        return ret
 
     def append_special_section(self, sec_name, sec_data):
         """Add new special section to ELF file
