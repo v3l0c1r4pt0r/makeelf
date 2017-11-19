@@ -476,13 +476,13 @@ class Elf32_Phdr:
     def __str__(self):
         return '{p_type=%s, p_offset=%s, p_vaddr=%s, p_paddr=%s, ' \
                 'p_filesz=%s, p_memsz=%s, p_flags=%s, p_align=%s}' % \
-                (self.p_type, self.p_flags, self.p_offset, self.p_vaddr,
-                        self.p_paddr, self.p_filesz, self.p_memsz, self.p_align)
+                (self.p_type, self.p_offset, self.p_vaddr, self.p_paddr,
+                        self.p_filesz, self.p_memsz, self.p_flags, self.p_align)
 
     def __repr__(self):
         return '%s(%s, %s, %s, %s, %s, %s, %s, %s)' % (type(self).__name__,
-                self.p_type, self.p_flags, self.p_offset, self.p_vaddr,
-                self.p_paddr, self.p_filesz, self.p_memsz, self.p_align)
+                self.p_type, self.p_offset, self.p_vaddr, self.p_paddr,
+                self.p_filesz, self.p_memsz, self.p_flags, self.p_align)
 
     def __bytes__(self):
         p_type = uint32(self.p_type, little=self.little)
