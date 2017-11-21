@@ -319,6 +319,8 @@ class EM(Enum):
     EM_MN10300_OLD = 0xbeef
     ## Old MN10200 objects used 0xdead (EM_MN10200 is correct).
     EM_MN10200_OLD = 0xdead
+    # LKV373A unknown architecture
+    EM_LKV373A = 0x373a
 
 
 ## \class Elf32_Ehdr
