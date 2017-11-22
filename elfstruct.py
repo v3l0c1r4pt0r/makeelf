@@ -651,6 +651,40 @@ class Elf32_Shdr:
         return len(bytes(self))
 
 
+class STB:
+    """Symbol Table Binding"""
+    STB_LOCAL = 0
+    STB_GLOBAL = 1
+    STB_WEAK = 2
+    STB_LOOS = 10
+    STB_HIOS = 12
+    STB_LOPROC = 13
+    STB_HIPROC = 15
+
+
+class STT:
+    """Symbol Types"""
+    STT_NOTYPE = 0
+    STT_OBJECT = 1
+    STT_FUNC = 2
+    STT_SECTION = 3
+    STT_FILE = 4
+    STT_COMMON = 5
+    STT_TLS = 6
+    STT_LOOS = 10
+    STT_HIOS = 12
+    STT_LOPROC = 13
+    STT_HIPROC = 15
+
+
+class STV:
+    """Symbol Visibility"""
+    STV_DEFAULT = 0
+    STV_INTERNAL = 1
+    STV_HIDDEN = 2
+    STV_PROTECTED = 3
+
+
 class Elf32_Sym:
     """Symbol Table Entry"""
 
