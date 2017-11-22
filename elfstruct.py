@@ -544,6 +544,20 @@ class SHT(Enum):
     SHT_HIUSER = 0xffffffff
 
 
+class SHN:
+    """Special Section Indexes"""
+    SHN_UNDEF = 0
+    SHN_LORESERVE = 0xff00
+    SHN_LOPROC = 0xff00
+    SHN_HIPROC = 0xff1f
+    SHN_LOOS = 0xff20
+    SHN_HIOS = 0xff3f
+    SHN_ABS = 0xfff1
+    SHN_COMMON = 0xfff2
+    SHN_XINDEX = 0xffff
+    SHN_HIRESERVE = 0xffff
+
+
 class SHF(Enum):
     SHF_WRITE = 0x1
     SHF_ALLOC = 0x2
