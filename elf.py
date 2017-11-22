@@ -263,3 +263,16 @@ class ELF:
         ret = len(self.Elf.Phdr_table)
         self.Elf.Phdr_table.append(Phdr)
         return ret
+
+    def append_symbol(self, sym_name, sym_section, sym_offset, sym_size,
+            sym_binding=STB.STB_LOCAL, sym_type=STT.STT_NOTYPE,
+            sym_visibility=STV.STV_DEFAULT):
+        """Append new symbol to symbol table
+
+        Creates symbol table, if necessary, and adds new symbol name to symbol
+        string table and symbol descriptor to symbol table.
+            sym_name    - name of symbol as str or bytes, or None if unnamed
+            sym_section - number of section, where symbol is located
+            sym_offset  - location of symbol from start of the section
+            sym_size    - size of the symbol in bytes"""
+        raise Exception('Not implemented')
