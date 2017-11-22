@@ -2,6 +2,7 @@
 # Classes for ELF file serialization/deserialization
 from type.enum import Enum
 from type.align import align,unalign
+from type.uint8 import uint8
 from type.uint16 import uint16
 from type.uint32 import uint32
 import utils
@@ -645,6 +646,56 @@ class Elf32_Shdr:
                 sh_addr.integer, sh_offset.integer, sh_size.integer,
                 sh_link.integer, sh_info.integer, sh_addralign.integer,
                 sh_entsize.integer), b
+
+    def __len__(self):
+        return len(bytes(self))
+
+
+class Elf32_Sym:
+    """Symbol Table Entry"""
+
+    def __init__(self, st_name=0, st_value=0, st_size=0, st_info=0, st_other=0,
+            st_shndx=SHN.SHN_UNDEF, little=False):
+        self.st_name = st_name
+        self.st_value = st_value
+        self.st_size = st_size
+        self.st_info = st_info
+        self.st_other = st_other
+        self.st_shndx = st_shndx
+
+        self.little = little
+
+    def __str__(self):
+        return '{st_name=%s, st_value=%s, st_size=%s, st_info=%s, ' \
+                'st_other=%s, st_shndx=%s}' % (self.st_name, self.st_value,
+                        self.st_size, self.st_info, self.st_other,
+                        self.st_shndx)
+
+    def __repr__(self):
+        return '%s(%s, %s, %s, %s, %s, %s)' % (type(self).__name__,
+                self.st_name, self.st_value, self.st_size, self.st_info,
+                self.st_other, self.st_shndx)
+
+    def __bytes__(self):
+        st_name = uint32(self.st_name, little=self.little)
+        st_value = uint32(self.st_value, little=self.little)
+        st_size = uint32(self.st_size, little=self.little)
+        st_info = uint8(self.st_info, little=self.little)
+        st_other = uint8(self.st_other, little=self.little)
+        st_shndx = uint16(self.st_shndx, little=self.little)
+
+        return bytes(st_name) + bytes(st_value) + bytes(st_size) + \
+                bytes(st_info) + bytes(st_other) + bytes(st_shndx)
+
+    def from_bytes(b, little=False):
+        st_name, b = uint32.from_bytes(b, little=little)
+        st_value, b = uint32.from_bytes(b, little=little)
+        st_size, b = uint32.from_bytes(b, little=little)
+        st_info, b = uint8.from_bytes(b, little=little)
+        st_other, b = uint8.from_bytes(b, little=little)
+        st_shndx, b = uint16.from_bytes(b, little=little)
+
+        return Elf32_Sym(st_name, st_value, st_size, st_info, st_other, st_shndx), b
 
     def __len__(self):
         return len(bytes(self))
