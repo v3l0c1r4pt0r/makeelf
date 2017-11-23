@@ -1,3 +1,6 @@
+#!/usr/bin/env python3
+## \file uint8.py
+#  \brief Unsigned 8-bit Integer
 import struct
 
 class uint8:

@@ -1,3 +1,6 @@
+#!/usr/bin/env python3
+## \file uint16.py
+#  \brief Unsigned 16-bit Integer
 import struct
 
 class uint16:

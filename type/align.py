@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
-# alignment function
+## \file align.py
+#  \brief alignment function
 from math import ceil
 
 def align(b, alignment=4):

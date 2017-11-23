@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+## \file uint64.py
+#  \brief Unsigned 64-bit Integer
 import struct
 
 class uint64:

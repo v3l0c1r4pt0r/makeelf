@@ -1,3 +1,6 @@
+#!/usr/bin/env python3
+## \file uint24.py
+#  \brief Unsigned 24-bit Integer
 import struct
 
 class uint24:

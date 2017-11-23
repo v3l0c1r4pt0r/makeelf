@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+## \file uint32.py
+#  \brief Unsigned 32-bit Integer
 import struct
 
 class uint32:

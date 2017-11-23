@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
-# Classes for ELF file serialization/deserialization
+## \file elfstruct.py
+#  \brief Classes for ELF file serialization/deserialization
 from type.enum import Enum
 from type.align import align,unalign
 from type.uint8 import uint8

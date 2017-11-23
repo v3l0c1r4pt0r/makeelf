@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
-# enumeration type
+## \file enum.py
+#  \brief enumeration type
 import struct
 import sys
 from enum import IntEnum
