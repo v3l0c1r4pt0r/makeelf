@@ -8,6 +8,8 @@ from type.uint16 import uint16
 from type.uint32 import uint32
 import utils
 
+## \class ELFCLASS
+#  \brief File class
 class ELFCLASS(Enum):
     """EI_CLASS enumeration"""
     ELFCLASSNONE = 0
@@ -15,6 +17,8 @@ class ELFCLASS(Enum):
     ELFCLASS64 = 2
 
 
+## \class ELFDATA
+#  \brief Data encoding
 class ELFDATA(Enum):
     """EI_DATA enumeration"""
     ELFDATANONE = 0
@@ -22,12 +26,16 @@ class ELFDATA(Enum):
     ELFDATA2MSB = 2
 
 
+## \class EV
+#  \brief File version
 class EV(Enum):
     """EI_VERSION enumeration"""
     EV_NONE = 0
     EV_CURRENT = 1
 
 
+## \class ELFOSABI
+#  \brief Operating system/ABI identification
 class ELFOSABI(Enum):
     """EI_OSABI enumeration"""
     ELFOSABI_NONE = 0
@@ -52,6 +60,8 @@ class ELFOSABI(Enum):
     ELFOSABI_STANDALONE = 255
 
 
+## \class Elf32_e_ident
+#  \brief ELF Identification
 class Elf32_e_ident:
 
     def __init__(self, EI_MAG=b'\x7fELF', EI_CLASS=ELFCLASS.ELFCLASS32,
@@ -125,6 +135,9 @@ class Elf32_e_ident:
     def __len__(self):
         return len(bytes(self))
 
+
+## \class ET
+#  \brief Object file type
 class ET(Enum):
     """e_type enumeration"""
     ET_NONE = 0
@@ -138,6 +151,8 @@ class ET(Enum):
     ET_HIPROC = 0xffff
 
 
+## \class EM
+#  \brief Machine type
 class EM(Enum):
     """e_machine enumeration"""
     EM_NONE = 0
@@ -295,6 +310,8 @@ class EM(Enum):
     EM_MN10200_OLD = 0xdead
 
 
+## \class Elf32_Ehdr
+#  \brief ELF Header
 class Elf32_Ehdr:
 
     def __init__(self, e_ident=None, e_type=ET.ET_REL, e_machine=EM.EM_NONE,
@@ -410,6 +427,8 @@ class Elf32_Ehdr:
         return len(bytes(self))
 
 
+## \class PT
+#  \brief Segment Type
 class PT(Enum):
     PT_NULL = 0
     PT_LOAD = 1
@@ -451,6 +470,8 @@ class PT(Enum):
     PT_S390_PGSTE = 0x70000000
 
 
+## \class PF
+#  \brief Segment Flag Bits
 class PF(Enum):
     # FIXME: should be bitmap in future, not enum
     PF_X = 0x01
@@ -460,6 +481,8 @@ class PF(Enum):
     PF_MASKPROC = 0xf0000000
 
 
+## \class Elf32_Phdr
+#  \brief Program Header
 class Elf32_Phdr:
 
     def __init__(self, p_type=0, p_offset=0, p_vaddr=0, p_paddr=0, p_filesz=0,
@@ -519,6 +542,8 @@ class Elf32_Phdr:
         return len(bytes(self))
 
 
+## \class SHT
+#  \brief Section Types
 class SHT(Enum):
     """Valid values for sh_type field"""
     SHT_NULL = 0
@@ -546,8 +571,9 @@ class SHT(Enum):
     SHT_HIUSER = 0xffffffff
 
 
+## \class SHN
+#  \brief Special Section Indexes
 class SHN:
-    """Special Section Indexes"""
     SHN_UNDEF = 0
     SHN_LORESERVE = 0xff00
     SHN_LOPROC = 0xff00
@@ -560,6 +586,8 @@ class SHN:
     SHN_HIRESERVE = 0xffff
 
 
+## \class SHF
+#  \brief Section Attribute Flags
 class SHF(Enum):
     SHF_WRITE = 0x1
     SHF_ALLOC = 0x2
@@ -575,6 +603,8 @@ class SHF(Enum):
     SHF_MASKPROC = 0xf0000000
 
 
+## \class Elf32_Shdr
+#  \brief Section Header
 class Elf32_Shdr:
 
     def __init__(self, sh_name=0, sh_type=SHT.SHT_NULL, sh_flags=0, sh_addr=0,
@@ -652,8 +682,9 @@ class Elf32_Shdr:
         return len(bytes(self))
 
 
+## \class STB
+#  \brief Symbol Table Binding
 class STB:
-    """Symbol Table Binding"""
     STB_LOCAL = 0
     STB_GLOBAL = 1
     STB_WEAK = 2
@@ -663,8 +694,9 @@ class STB:
     STB_HIPROC = 15
 
 
+## \class STT
+#  \brief Symbol Types
 class STT:
-    """Symbol Types"""
     STT_NOTYPE = 0
     STT_OBJECT = 1
     STT_FUNC = 2
@@ -678,16 +710,18 @@ class STT:
     STT_HIPROC = 15
 
 
+## \class STV
+#  \brief Symbol Visibility
 class STV:
-    """Symbol Visibility"""
     STV_DEFAULT = 0
     STV_INTERNAL = 1
     STV_HIDDEN = 2
     STV_PROTECTED = 3
 
 
+## \class Elf32_Sym
+#  \brief Symbol Table Entry
 class Elf32_Sym:
-    """Symbol Table Entry"""
 
     def __init__(self, st_name=0, st_value=0, st_size=0, st_info=0, st_other=0,
             st_shndx=SHN.SHN_UNDEF, little=False):
@@ -736,12 +770,12 @@ class Elf32_Sym:
         return len(bytes(self))
 
 
+## \class Elf32
+#  \brief Complete ELF structure storage class
+#  \details Allows to craft ELF file using low-level interfaces for manipulating
+#  data fields and accessing headers contained inside. This class is not meant
+#  to provide any abstraction on top of ELF structure
 class Elf32:
-    """Complete ELF structure storage class
-
-    Allows to craft ELF file using low-level interfaces for manipulating data
-    fields and accessing headers contained inside. This class is not meant to
-    provide any abstraction on top of ELF structure"""
 
     def __init__(self, Ehdr=None, Phdr_table=None, Shdr_table=None,
             sections=None, little=False):
