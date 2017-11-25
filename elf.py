@@ -54,12 +54,18 @@ class ELF:
             raise Exception('ELF class %s currently unsupported' % e_class)
 
         if e_data == ELFDATA.ELFDATA2MSB:
+            ## Header endianness indicator
+            #  \details Is true, if header values are meant to be stored as
+            #  little-endian or false otherwise
             self.little = False
         elif e_data == ELFDATA.ELFDATA2LSB:
             self.little = True
         else:
             self.little = sys.byteorder == 'little'
 
+        ## Instance of \link elfstruct.Elf32 \endlink class
+        #  \details Provides possibility to make any modification to ELF file,
+        #  including setting fields to invalid values.
         self.Elf = cls(Ehdr=hdr(e_ident=Elf32_e_ident(EI_CLASS=e_class, EI_DATA=e_data),
                 e_type=e_type, e_machine=e_machine, little=self.little))
 
