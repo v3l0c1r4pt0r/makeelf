@@ -840,6 +840,15 @@ class Elf32_Sym:
 #  to provide any abstraction on top of ELF structure
 class Elf32:
 
+    ##
+    # \brief The constructor
+    # \details Reconstructs new Elf32 object with all stored public members
+    #
+    # \param Ehdr ELF header
+    # \param Phdr_table List of program headers
+    # \param Shdr_table List of section headers
+    # \param sections List of section contents
+    # \param little Endianness of ELF file
     def __init__(self, Ehdr=None, Phdr_table=None, Shdr_table=None,
             sections=None, little=False):
         if Ehdr is None:
@@ -879,14 +888,31 @@ class Elf32:
         else:
             raise Exception('Sections must be a list containing section content')
 
+    ##
+    # \brief Convert to str
+    # \details Useful for presenting contents to the user
+    #
+    # \return String in format: "{key=val, key2=val2}"
     def __str__(self):
         return '{Ehdr=%s, Phdr_table=%s, Shdr_table=%s, sections=%s}' % \
                 (self.Ehdr, self.Phdr_table, self.Shdr_table, self.sections)
 
+    ##
+    # \brief String representation
+    # \details Provides ability to recreate object using its constructor, from
+    # Python CLI mode
+    #
+    # \return String in format: "Classname(param, param2)"
     def __repr__(self):
         return '%s(%s, %s, %s, %s)' % (type(self).__name__, self.Ehdr,
                 self.Phdr_table, self.Shdr_table, self.sections)
 
+    ##
+    # \brief Serialization to bytes
+    # \details Converts Python object to byte stream, ready to be saved to ELF
+    # file
+    #
+    # \return Serialized object
     def __bytes__(self):
         headers = {}
         headers[0] = bytes(self.Ehdr)
@@ -925,6 +951,13 @@ class Elf32:
             b = utils.bytes_xor(b, aligned)
         return b
 
+    ##
+    # \brief Deserialization of object
+    #
+    # \param b bytes object with serialized data on the beginning
+    # \param little endianness of data
+    #
+    # \return tuple of deserialized object and rest of bytes
     def from_bytes(b, little=False):
         blob = b
         Ehdr, b = Elf32_Ehdr.from_bytes(b)
@@ -952,6 +985,10 @@ class Elf32:
 
         return Elf32(Ehdr, Phdr_a, Shdr_a, sections), None
 
+    ##
+    # \brief Length of object
+    #
+    # \return length of object
     def __len__(self):
         return len(bytes(self))
 
