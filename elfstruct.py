@@ -70,12 +70,15 @@ class Elf32_e_ident:
             EI_DATA=ELFDATA.ELFDATA2MSB, EI_VERSION=EV.EV_CURRENT,
             EI_OSABI=ELFOSABI.ELFOSABI_NONE, little=False):
         if isinstance(EI_MAG, bytes):
+            ## ELF magic value
+            #  \details Should be '^?ELF'
             self.EI_MAG = EI_MAG
             # TODO: check if valid and signal someone if invalid
         else:
             raise Exception('EI_MAG: wrong type: %s' % type(EI_MAG).__name__)
 
         if isinstance(EI_CLASS, ELFCLASS):
+            ## Value of type \link ELFCLASS \endlink
             self.EI_CLASS = EI_CLASS
         elif EI_CLASS in map(int, ELFCLASS):
             self.EI_CLASS = ELFCLASS(EI_CLASS)
@@ -83,6 +86,7 @@ class Elf32_e_ident:
             self.EI_CLASS = ELFCLASS[EI_CLASS]
 
         if isinstance(EI_DATA, ELFDATA):
+            ## Value of type \link ELFDATA \endlink
             self.EI_DATA = EI_DATA
         elif EI_DATA in map(int, ELFDATA):
             self.EI_DATA = ELFDATA(EI_DATA)
@@ -90,6 +94,7 @@ class Elf32_e_ident:
             self.EI_DATA = ELFDATA[EI_DATA]
 
         if isinstance(EI_VERSION, EV):
+            ## Value of type \link EV \endlink
             self.EI_VERSION = EI_VERSION
         elif EI_VERSION in map(int, EV):
             self.EI_VERSION = EV(EI_VERSION)
@@ -97,12 +102,16 @@ class Elf32_e_ident:
             self.EI_VERSION = EV[EI_VERSION]
 
         if isinstance(EI_OSABI, ELFOSABI):
+            ## Value of type \link ELFOSABI \endlink
             self.EI_OSABI = EI_OSABI
         elif EI_OSABI in map(int, ELFOSABI):
             self.EI_OSABI = ELFOSABI(EI_OSABI)
         else:
             self.EI_OSABI = ELFOSABI[EI_OSABI]
 
+        ## Header endianness indicator
+        #  \details Is true, if header values are meant to be stored as
+        #  little-endian or false otherwise
         self.little = little # should not be used, but for consistency set it
 
     def __str__(self):
@@ -322,11 +331,13 @@ class Elf32_Ehdr:
             e_shstrndx=0, little=False):
 
         if e_ident is None:
+            ## Value of type \link Elf32_e_ident \endlink
             self.e_ident = Elf32_e_ident()
         else:
             self.e_ident = e_ident
 
         if isinstance(e_type, ET):
+            ## Value of type \link ET \endlink
             self.e_type = e_type
         elif e_type in map(int, ET):
             self.e_type = EM(e_type)
@@ -334,24 +345,39 @@ class Elf32_Ehdr:
             self.e_type = ET[e_type]
 
         if isinstance(e_machine, EM):
+            ## Value of type \link EM \endlink
             self.e_machine = e_machine
         elif e_machine in map(int, EM):
             self.e_machine = EM(e_machine)
         else:
             self.e_machine = EM[e_machine]
 
+        ## Value of type \link EV \endlink
         self.e_version = e_version
+        ## Program entry point
         self.e_entry = e_entry
+        ## Program Header offset in file
         self.e_phoff = e_phoff
+        ## Section Header offset in file
         self.e_shoff = e_shoff
+        ## Processor-specific flags
         self.e_flags = e_flags
+        ## ELF Header size
         self.e_ehsize = e_ehsize
+        ## Program Header entry size
         self.e_phentsize = e_phentsize
+        ## Program Header entry count
         self.e_phnum = e_phnum
+        ## Section Header entry size
         self.e_shentsize = e_shentsize
+        ## Section Header entry count
         self.e_shnum = e_shnum
+        ## Index of .shstrtab section in section table
         self.e_shstrndx = e_shstrndx
 
+        ## Header endianness indicator
+        #  \details Is true, if header values are meant to be stored as
+        #  little-endian or false otherwise
         self.little = little
         if self.e_ident.EI_DATA is ELFDATA.ELFDATA2LSB:
             # overriding explicit value for header consistency
@@ -489,15 +515,27 @@ class Elf32_Phdr:
 
     def __init__(self, p_type=0, p_offset=0, p_vaddr=0, p_paddr=0, p_filesz=0,
             p_memsz=0, p_flags=0, p_align=0, little=False):
+        ## Type of segment
         self.p_type = p_type
+        ## Offset in file, where first byte of segment resides
         self.p_offset = p_offset
+        ## Virtual address of segment in memory
         self.p_vaddr = p_vaddr
+        ## Physical address of segment in memory
         self.p_paddr = p_paddr
+        ## Size of segment in file
         self.p_filesz = p_filesz
+        ## Size of segment in memory
         self.p_memsz = p_memsz
+        ## Segment flags
         self.p_flags = p_flags
+        ## Segment alignment
+        #  \details Value of 0 or 1 means no aligment is required
         self.p_align = p_align
 
+        ## Header endianness indicator
+        #  \details Is true, if header values are meant to be stored as
+        #  little-endian or false otherwise
         self.little = little
 
     def __str__(self):
@@ -612,24 +650,38 @@ class Elf32_Shdr:
     def __init__(self, sh_name=0, sh_type=SHT.SHT_NULL, sh_flags=0, sh_addr=0,
             sh_offset=0, sh_size=0, sh_link=0, sh_info=0, sh_addralign=0,
             sh_entsize=0, little=False):
+        ## Offset of section name in .shstrtab
         self.sh_name = sh_name
 
         if isinstance(sh_type, SHT):
+            ## Value of type \link SHT \endlink
             self.sh_type = sh_type
         elif sh_type in map(int, SHT):
             self.sh_type = SHT(sh_type)
         else:
             self.sh_type = SHT[sh_type]
 
+        ## Value of type \link SHF \endlink
         self.sh_flags = sh_flags
+        ## Address of first byte of segment in memory
         self.sh_addr = sh_addr
+        ## Address of first byte of segment in file
         self.sh_offset = sh_offset
+        ## Size of section in file
         self.sh_size = sh_size
+        ## Section type dependent value
         self.sh_link = sh_link
+        ## Section type dependent value
         self.sh_info = sh_info
+        ## Section alignment
+        #  \details Value of 0 or 1 means no aligment is required
         self.sh_addralign = sh_addralign
+        ## Entry size, if section holds fixed-size entries
         self.sh_entsize = sh_entsize
 
+        ## Header endianness indicator
+        #  \details Is true, if header values are meant to be stored as
+        #  little-endian or false otherwise
         self.little = little
 
     def __str__(self):
@@ -727,13 +779,22 @@ class Elf32_Sym:
 
     def __init__(self, st_name=0, st_value=0, st_size=0, st_info=0, st_other=0,
             st_shndx=SHN.SHN_UNDEF, little=False):
+        ## Symbol name in .strtab
         self.st_name = st_name
+        ## Symbol value
         self.st_value = st_value
+        ## Size of the symbol
         self.st_size = st_size
+        ## Packed values of \link STB \endlink, \link STT \endlink and ST_INFO
         self.st_info = st_info
+        ## Packed values of \link STV \endlink and reserved bits
         self.st_other = st_other
+        ## Index of section, symbol is based on
         self.st_shndx = st_shndx
 
+        ## Header endianness indicator
+        #  \details Is true, if header values are meant to be stored as
+        #  little-endian or false otherwise
         self.little = little
 
     def __str__(self):
@@ -791,23 +852,29 @@ class Elf32:
             sections = []
 
         if isinstance(Ehdr, Elf32_Ehdr):
+            ## Instance of \link Elf32_Ehdr \endlink
             self.Ehdr = Ehdr
         else:
             self.Ehdr = Ehdr.from_bytes(Ehdr)
 
         if isinstance(Phdr_table, list) and (len(Phdr_table) is 0) or (
                 isinstance(Phdr_table[0], Elf32_Phdr)):
+            ## List of instances of \link Elf32_Phdr \endlink
             self.Phdr_table = Phdr_table
         else:
             raise Exception('Phdr table must be a list of Elf32_Phdr objects')
 
         if isinstance(Shdr_table, list) and (len(Shdr_table) is 0) or (
                 isinstance(Shdr_table[0], Elf32_Shdr)):
+            ## List of instances of \link Elf32_Shdr \endlink
             self.Shdr_table = Shdr_table
         else:
             raise Exception('Shdr table must be a list of Elf32_Shdr objects')
 
         if isinstance(sections, list):
+            ## List of section content
+            #  \details Contains raw bytes objects or any type that can be
+            #  converted using bytes function
             self.sections = sections
         else:
             raise Exception('Sections must be a list containing section content')
