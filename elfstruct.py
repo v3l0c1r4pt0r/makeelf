@@ -888,6 +888,8 @@ class Elf32:
         else:
             raise Exception('Sections must be a list containing section content')
 
+        self.little = little
+
     ##
     # \brief Convert to str
     # \details Useful for presenting contents to the user
@@ -983,7 +985,7 @@ class Elf32:
             section = blob[first:last]
             sections.append(section)
 
-        return Elf32(Ehdr, Phdr_a, Shdr_a, sections), None
+        return Elf32(Ehdr, Phdr_a, Shdr_a, sections, little=Ehdr.little), None
 
     ##
     # \brief Length of object

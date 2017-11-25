@@ -47,6 +47,10 @@ class ELF:
 
     def __init__(self, e_class=ELFCLASS.ELFCLASS32, e_data=ELFDATA.ELFDATA2MSB,
             e_type=ET.ET_EXEC, e_machine=EM.EM_NONE):
+        if e_class is None and e_data is None and e_type is None and e_machine \
+                is None:
+            # create empty object
+            return
         if e_class == ELFCLASS.ELFCLASS32:
             cls = Elf32
             hdr = Elf32_Ehdr
@@ -145,7 +149,10 @@ class ELF:
 
     def from_bytes(b):
         """Deserializes ELF from block of bytes"""
-        return Elf32.from_bytes(b)
+        ret = ELF(None, None, None, None)
+        ret.Elf, b = Elf32.from_bytes(b)
+        ret.little = ret.Elf.little
+        return ret, b
 
     def get_section_by_name(self, sec_name):
         """Returns section header and content as tuple, based on their name"""
