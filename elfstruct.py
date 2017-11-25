@@ -22,7 +22,9 @@ class ELFCLASS(Enum):
 class ELFDATA(Enum):
     """EI_DATA enumeration"""
     ELFDATANONE = 0
+    ## File is little-endian
     ELFDATA2LSB = 1
+    ## File is big-endian
     ELFDATA2MSB = 2
 
 
@@ -42,7 +44,7 @@ class ELFOSABI(Enum):
     ELFOSABI_HPUX = 1
     ELFOSABI_NETBSD = 2
     ELFOSABI_GNU = 3
-    # ELFOSABI_LINUX is an alias for ELFOSABI_GNU.
+    ## ELFOSABI_LINUX is an alias for ELFOSABI_GNU.
     ELFOSABI_LINUX = 3
     ELFOSABI_SOLARIS = 6
     ELFOSABI_AIX = 7
@@ -54,9 +56,9 @@ class ELFOSABI(Enum):
     ELFOSABI_OPENVMS = 13
     ELFOSABI_NSK = 14
     ELFOSABI_AROS = 15
-    # A GNU extension for the ARM.
+    ## A GNU extension for the ARM.
     ELFOSABI_ARM = 97
-    # A GNU extension for the MSP.
+    ## A GNU extension for the MSP.
     ELFOSABI_STANDALONE = 255
 
 
@@ -166,12 +168,12 @@ class EM(Enum):
     EM_MIPS = 8
     EM_S370 = 9
     EM_MIPS_RS3_LE = 10
-    # 11 was the old Sparc V9 ABI.
+    ## 11 was the old Sparc V9 ABI.
     EM_OLD_SPARC_V9 = 11
-    # 12 through 14 are reserved.
+    ## 12 through 14 are reserved.
     EM_PARISC = 15
     # 16 is reserved.
-    # Some old PowerPC object files use 17.
+    ## Some old PowerPC object files use 17.
     EM_PPC_OLD = 17
     EM_VPP500 = 17
     EM_SPARC32PLUS = 18
@@ -243,7 +245,7 @@ class EM(Enum):
     EM_TMM_GPP = 96
     EM_NS32K = 97
     EM_TPC = 98
-    # Some old picoJava object files use 99 (EM_PJ is correct).
+    ## Some old picoJava object files use 99 (EM_PJ is correct).
     EM_SNP1K = 99
     EM_ST200 = 100
     EM_IP2K = 101
@@ -263,50 +265,50 @@ class EM(Enum):
     EM_TILEGX = 191
     # The Morph MT.
     EM_MT = 0x2530
-    # DLX.
+    ## #DLX.
     EM_DLX = 0x5aa5
-    # FRV.
+    ## #FRV.
     EM_FRV = 0x5441
     # Infineon Technologies 16-bit microcontroller with C166-V2 core.
     EM_X16X = 0x4688
-    # Xstorym16
+    ## #Xstorym16
     EM_XSTORMY16 = 0xad45
-    # Renesas M32C
+    ## Renesas M32C
     EM_M32C = 0xfeb0
-    # Vitesse IQ2000
+    ## #Vitesse IQ2000
     EM_IQ2000 = 0xfeba
-    # NIOS
+    ## NIOS
     EM_NIOS32 = 0xfebb
-    # Old AVR objects used 0x1057 (EM_AVR is correct).
+    ## #Old AVR objects used 0x1057 (EM_AVR is correct).
     EM_AVR_OLD = 0x1057
-    # Old MSP430 objects used 0x1059 (EM_MSP430 is correct).
+    ## Old MSP430 objects used 0x1059 (EM_MSP430 is correct).
     EM_MSP430_OLD = 0x1059
-    # Old FR30 objects used 0x3330 (EM_FR30 is correct).
+    ## Old FR30 objects used 0x3330 (EM_FR30 is correct).
     EM_FR30_OLD = 0x3330
-    # Old OpenRISC objects used 0x3426 and 0x8472 (EM_OR1K is correct).
+    ## Old OpenRISC objects used 0x3426 and 0x8472 (EM_OR1K is correct).
     EM_OR1K_OLD = 0x3426
-    # Old D10V objects used 0x7650 (EM_D10V is correct).
+    ## Old D10V objects used 0x7650 (EM_D10V is correct).
     EM_D10V_OLD = 0x7650
-    # Old D30V objects used 0x7676 (EM_D30V is correct).
+    ## Old D30V objects used 0x7676 (EM_D30V is correct).
     EM_D30V_OLD = 0x7676
-    # Old IP2X objects used 0x8217 (EM_IP2K is correct).
+    ## Old IP2X objects used 0x8217 (EM_IP2K is correct).
     EM_IP2K_OLD = 0x8217
-    # Old PowerPC objects used 0x9025 (EM_PPC is correct).
+    ## Old PowerPC objects used 0x9025 (EM_PPC is correct).
     EM_POWERPC_OLD = 0x9025
-    # Old Alpha objects used 0x9026 (EM_ALPHA is correct).
+    ## Old Alpha objects used 0x9026 (EM_ALPHA is correct).
     EM_ALPHA_OLD = 0x9026
-    # Old M32R objects used 0x9041 (EM_M32R is correct).
+    ## Old M32R objects used 0x9041 (EM_M32R is correct).
     EM_M32R_OLD = 0x9041
-    # Old V850 objects used 0x9080 (EM_V850 is correct).
+    ## Old V850 objects used 0x9080 (EM_V850 is correct).
     EM_V850_OLD = 0x9080
-    # Old S/390 objects used 0xa390 (EM_S390 is correct).
+    ## Old S/390 objects used 0xa390 (EM_S390 is correct).
     EM_S390_OLD = 0xa390
-    # Old Xtensa objects used 0xabc7 (EM_XTENSA is correct).
+    ## Old Xtensa objects used 0xabc7 (EM_XTENSA is correct).
     EM_XTENSA_OLD = 0xabc7
     EM_MICROBLAZE_OLD = 0xbaab
-    # Old MN10300 objects used 0xbeef (EM_MN10300 is correct).
+    ## Old MN10300 objects used 0xbeef (EM_MN10300 is correct).
     EM_MN10300_OLD = 0xbeef
-    # Old MN10200 objects used 0xdead (EM_MN10200 is correct).
+    ## Old MN10200 objects used 0xdead (EM_MN10200 is correct).
     EM_MN10200_OLD = 0xdead
 
 
@@ -443,30 +445,30 @@ class PT(Enum):
     PT_LOPROC = 0x70000000
     PT_HIPROC = 0x7fffffff
     # The remaining values are not in the standard.
-    # Frame unwind information.
+    ## Frame unwind information.
     PT_GNU_EH_FRAME = 0x6474e550
     PT_SUNW_EH_FRAME = 0x6474e550
-    # Stack flags.
+    ## Stack flags.
     PT_GNU_STACK = 0x6474e551
-    # Read only after relocation.
+    ## Read only after relocation.
     PT_GNU_RELRO = 0x6474e552
-    # Platform architecture compatibility information
+    ## Platform architecture compatibility information
     PT_ARM_ARCHEXT = 0x70000000
-    # Exception unwind tables
+    ## Exception unwind tables
     PT_ARM_EXIDX = 0x70000001
-    # Register usage information.  Identifies one .reginfo section.
+    ## Register usage information.  Identifies one .reginfo section.
     PT_MIPS_REGINFO =0x70000000
-    # Runtime procedure table.
+    ## Runtime procedure table.
     PT_MIPS_RTPROC = 0x70000001
-    # .MIPS.options section.
+    ## .MIPS.options section.
     PT_MIPS_OPTIONS = 0x70000002
-    # .MIPS.abiflags section.
+    ## .MIPS.abiflags section.
     PT_MIPS_ABIFLAGS = 0x70000003
-    # Platform architecture compatibility information
+    ## Platform architecture compatibility information
     PT_AARCH64_ARCHEXT = 0x70000000
-    # Exception unwind tables
+    ## Exception unwind tables
     PT_AARCH64_UNWIND = 0x70000001
-    # 4k page table size
+    ## 4k page table size
     PT_S390_PGSTE = 0x70000000
 
 
