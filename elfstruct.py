@@ -785,9 +785,9 @@ class Elf32_Sym:
         self.st_value = st_value
         ## Size of the symbol
         self.st_size = st_size
-        ## Packed values of \link STB \endlink, \link STT \endlink and ST_INFO
+        ## Packed values of \link STB \endlink and \link STT \endlink
         self.st_info = st_info
-        ## Packed values of \link STV \endlink and reserved bits
+        ## Packed values of \link STV \endlink
         self.st_other = st_other
         ## Index of section, symbol is based on
         self.st_shndx = st_shndx
