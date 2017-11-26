@@ -202,11 +202,9 @@ class ELF:
                 'header with that name found. ELF internal structure '\
                 'damaged.' % (sec_name.decode('utf-8'), name_off))
 
-    def append_section(self, sec_name, sec_data, sec_addr):
-        """Add new section to ELF file
-
-        Name is automatically appended to .shstrtab section. Return value is ID
-        of newly added section"""
+    def _append_section(self, sec_name, sec_data, sec_addr,
+            sh_type=SHT.SHT_PROGBITS, sh_flags=0, sh_link=0, sh_info=0,
+            sh_addralign=1, sh_entsize=0):
         if isinstance(sec_data, str):
             sec_data = bytes(sec_data, 'utf-8')
         elif not isinstance(sec_data, bytes):
@@ -222,10 +220,11 @@ class ELF:
         name_off = shstrtab.append(sec_name)
 
         # craft Shdr
-        shdr = Elf32_Shdr(sh_name=name_off, sh_type=SHT.SHT_PROGBITS,
-                sh_flags=0, sh_addr=sec_addr, sh_offset=0,
-                sh_size=len(sec_data), sh_link=0, sh_info=0, sh_addralign=1,
-                sh_entsize=0, little=self.little)
+        shdr = Elf32_Shdr(sh_name=name_off, sh_type=sh_type,
+                sh_flags=sh_flags, sh_addr=sec_addr, sh_offset=0,
+                sh_size=len(sec_data), sh_link=sh_link, sh_info=sh_info,
+                sh_addralign=sh_addralign, sh_entsize=sh_entsize,
+                little=self.little)
 
         # save current section index
         ret = len(self.Elf.Shdr_table)
@@ -243,7 +242,16 @@ class ELF:
 
         return ret
 
-    def append_special_section(self, sec_name, sec_data):
+    def append_section(self, sec_name, sec_data, sec_addr):
+        """Add new section to ELF file
+
+        Name is automatically appended to .shstrtab section. Return value is ID
+        of newly added section"""
+        return self._append_section(sec_name, sec_data, sec_addr,
+                sh_type=SHT.SHT_PROGBITS, sh_flags=0, sh_link=0, sh_info=0,
+                sh_addralign=1, sh_entsize=0)
+
+    def append_special_section(self, sec_name):
         """Add new special section to ELF file
 
         This function allows to add one of the special, structured sections to
