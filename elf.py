@@ -62,7 +62,12 @@ class _Symtab:
     """Helper class for handling symbol table"""
 
     def __init__(self):
+        # init list
         self.lst = []
+
+        # create entry for index STN_UNDEF and append to table
+        first = Elf32_Sym()
+        self.lst.append(first)
 
     def __str__(self):
         return str(self.lst)
