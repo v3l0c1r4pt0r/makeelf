@@ -2,6 +2,7 @@
 ## \file elf.py
 #  \brief Module for high-level manipulation of ELF files
 from elfstruct import *
+import os
 
 class _Strtab:
     """Helper class for creating sections of type SHT_STRTAB
@@ -172,6 +173,15 @@ class ELF:
         ret.Elf, b = Elf32.from_bytes(b)
         ret.little = ret.Elf.little
         return ret, b
+
+    def from_file(filename):
+        """Deserializes ELF from filesystem"""
+        fp = os.open(filename, os.O_RDONLY)
+        file_size = os.fstat(fp).st_size
+        b = os.read(fp, file_size)
+        os.close(fp)
+
+        return ELF.from_bytes(b)
 
     def get_section_by_name(self, sec_name):
         """Returns section header and content as tuple, based on their name"""
