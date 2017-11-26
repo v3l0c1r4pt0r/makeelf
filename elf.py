@@ -383,4 +383,44 @@ class ELF:
             sym_section - number of section, where symbol is located
             sym_offset  - location of symbol from start of the section
             sym_size    - size of the symbol in bytes"""
-        raise Exception('Not implemented')
+
+        if not isinstance(sym_binding, STB):
+            raise Exception('Symbol binding not of type STB, %s given' %
+                    type(sym_binding).__name__)
+
+        if not isinstance(sym_type, STT):
+            raise Exception('Symbol type not of type STT, %s given' %
+                    type(sym_type).__name__)
+
+        if not isinstance(sym_visibility, STV):
+            raise Exception('Symbol visibility not of type STV, %s given' %
+                    type(sym_visibility).__name__)
+
+        # find .strtab, name will be stored there
+        try:
+            strtab_hdr, strtab = self.get_section_by_name('.strtab')
+        except:
+            # strtab not found, create
+            self.append_special_section('.strtab')
+            strtab_hdr, strtab = self.get_section_by_name('.strtab')
+
+        # find .symbtab for storing the symbol structure
+        try:
+            symtab_hdr, symtab = self.get_section_by_name('.symtab')
+        except:
+            # symtab not found, create
+            self.append_special_section('.symtab')
+            symtab_hdr, symtab = self.get_section_by_name('.symtab')
+
+        # add symbol name to .strtab
+        sym_off = strtab.append(sym_name)
+
+        # create new symbol structure
+        sym = Elf32_Sym(sym_off, sym_offset, sym_size, 0, 0,
+                sym_section, little=self.little)
+
+        # add symbol to symbol table
+        sym_id = symtab.append(sym)
+
+        # if local update sh_info to symbol id plus one
+        symtab_hdr.sh_info = sym_id + 1
