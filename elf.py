@@ -295,7 +295,26 @@ class ELF:
         This function allows to add one of the special, structured sections to
         ELF file. Name is automatically appended to .shstrtab section. Return
         value is ID of newly added section"""
-        raise Exception('Not implemented')
+        # sec_name should always by bytes
+        if isinstance(sec_name, str):
+            sec_name = bytes(sec_name, 'utf-8')
+
+        if sec_name == b'.strtab':
+            # create new string table
+            return self._append_section(sec_name, _Strtab(), 0,
+                    sh_type=SHT.SHT_STRTAB)
+        elif sec_name == b'.symtab':
+            # find id of .strtab
+            strtab_hdr, strtab = self.get_section_by_name('.strtab')
+            strtab_id = self.Elf.Shdr_table.index(strtab_hdr)
+
+            # create new symbol table
+            return self._append_section(sec_name, _Symtab(), 0,
+                    sh_type=SHT.SHT_SYMTAB, sh_link=strtab_id, sh_info=0,
+                    sh_addralign=4, sh_entsize=len(Elf32_Sym()))
+
+        raise Exception('%s is not a special section name or is not ' \
+                'supported yet' % sec_name)
 
     def append_segment(self, sec_id, addr=None, mem_size=-1, flags='rwx'):
         """Add new program header, desribing segment in memory
