@@ -418,10 +418,19 @@ class ELF:
             symtab_hdr, symtab = self.get_section_by_name('.symtab')
 
         # add symbol name to .strtab
-        sym_off = strtab.append(sym_name)
+        if sym_name is None:
+            sym_off = 0
+        else:
+            sym_off = strtab.append(sym_name)
+
+        # build st_info
+        st_info = (int(sym_type) & 0xf) | (int(sym_binding) << 4)
+
+        # build st_other
+        st_other = int(sym_visibility) & 0x3
 
         # create new symbol structure
-        sym = Elf32_Sym(sym_off, sym_offset, sym_size, 0, 0,
+        sym = Elf32_Sym(sym_off, sym_offset, sym_size, st_info, st_other,
                 sym_section, little=self.little)
 
         # add symbol to symbol table
