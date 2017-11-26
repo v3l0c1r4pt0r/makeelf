@@ -613,7 +613,7 @@ class SHT(Enum):
 
 ## \class SHN
 #  \brief Special Section Indexes
-class SHN:
+class SHN(Enum):
     SHN_UNDEF = 0
     SHN_LORESERVE = 0xff00
     SHN_LOPROC = 0xff00
@@ -738,7 +738,7 @@ class Elf32_Shdr:
 
 ## \class STB
 #  \brief Symbol Table Binding
-class STB:
+class STB(Enum):
     STB_LOCAL = 0
     STB_GLOBAL = 1
     STB_WEAK = 2
@@ -750,7 +750,7 @@ class STB:
 
 ## \class STT
 #  \brief Symbol Types
-class STT:
+class STT(Enum):
     STT_NOTYPE = 0
     STT_OBJECT = 1
     STT_FUNC = 2
@@ -766,7 +766,7 @@ class STT:
 
 ## \class STV
 #  \brief Symbol Visibility
-class STV:
+class STV(Enum):
     STV_DEFAULT = 0
     STV_INTERNAL = 1
     STV_HIDDEN = 2
