@@ -58,6 +58,36 @@ class _Strtab:
             return self.blob.find(sub, start, end)
 
 
+class _Symtab:
+    """Helper class for handling symbol table"""
+
+    def __init__(self):
+        self.lst = []
+
+    def __str__(self):
+        return str(self.lst)
+
+    def __repr__(self):
+        return repr(self.lst)
+
+    def __bytes__(self):
+        b = b''
+        for el in self.lst:
+            b += bytes(el)
+        return b
+
+    def __len__(self):
+        return len(bytes(self))
+
+    def append(self, Symhdr):
+        """Appends entry to symbol table"""
+        if not isinstance(Symhdr, Elf32_Sym):
+            # It is not expected, let's try converting throught bytes to struct
+            Symhdr = Elf32_Sym.from_bytes(bytes(Symhdr))
+
+        self.lst.append(Symhdr)
+
+
 class ELF:
     """This class is a wrapper on ELF structures provided by elfstruct module
     
