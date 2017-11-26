@@ -48,7 +48,7 @@ class _Strtab:
         self.blob += string + b'\0'
         return ret
 
-    def find(sub, start=None, end=None):
+    def find(self, sub, start=None, end=None):
         if start is None:
             return self.blob.find(sub)
         elif end is None:
@@ -207,8 +207,6 @@ class ELF:
             sh_addralign=1, sh_entsize=0):
         if isinstance(sec_data, str):
             sec_data = bytes(sec_data, 'utf-8')
-        elif not isinstance(sec_data, bytes):
-            sec_data = bytes(sec_data)
 
         # find .shstrtab
         shstrtab_hdr, shstrtab = self.get_section_by_name('.shstrtab')
