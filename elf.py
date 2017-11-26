@@ -8,8 +8,11 @@ class _Strtab:
 
     Guards general rules and allows appending new strings"""
 
-    def __init__(self):
-        self.blob = b'\0'
+    def __init__(self, b=None):
+        if b is not None:
+            self.blob = b
+        else:
+            self.blob = b'\0'
 
     def __str__(self):
         return str(self.blob)
@@ -22,6 +25,14 @@ class _Strtab:
 
     def __len__(self):
         return len(self.blob)
+
+    def __iadd__(lhs, rhs):
+        if isinstance(rhs, str):
+            rhs = bytes(rhs, 'utf-8')
+        if rhs[-1:] == b'\0':
+            lhs.blob += rhs
+        else:
+            lhs.blob += rhs + '\0'
 
     def append(self, string):
         """Appends string to the end of section
@@ -36,6 +47,14 @@ class _Strtab:
         ret = len(self.blob)
         self.blob += string + b'\0'
         return ret
+
+    def find(sub, start=None, end=None):
+        if start is None:
+            return self.blob.find(sub)
+        elif end is None:
+            return self.blob.find(sub, start)
+        else:
+            return self.blob.find(sub, start, end)
 
 
 class ELF:
@@ -169,7 +188,7 @@ class ELF:
             return (shstrtab_hdr, shstrtab)
 
         # find string in .shstrtab
-        name_off = shstrtab.blob.find(sec_name)
+        name_off = shstrtab.find(sec_name)
         if name_off is -1:
             raise Exception('Section "%s" not in ELF' % \
                     sec_name.decode('utf-8'))
@@ -197,6 +216,9 @@ class ELF:
         shstrtab_hdr, shstrtab = self.get_section_by_name('.shstrtab')
 
         # create entry in section name section
+        if not isinstance(shstrtab, _Strtab):
+            shstrtab = _Strtab(shstrtab)
+        self.Elf.sections[self.Elf.Ehdr.e_shstrndx] = shstrtab # FIXME: bad hack
         name_off = shstrtab.append(sec_name)
 
         # craft Shdr
