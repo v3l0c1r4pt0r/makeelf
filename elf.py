@@ -80,12 +80,19 @@ class _Symtab:
         return len(bytes(self))
 
     def append(self, Symhdr):
-        """Appends entry to symbol table"""
+        """Appends entry to symbol table
+
+        Returns index of newly appended header"""
         if not isinstance(Symhdr, Elf32_Sym):
             # It is not expected, let's try converting throught bytes to struct
             Symhdr = Elf32_Sym.from_bytes(bytes(Symhdr))
 
+        # store id of appended header
+        ret = len(self.lst)
+
         self.lst.append(Symhdr)
+
+        return ret
 
 
 class ELF:
