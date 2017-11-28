@@ -827,7 +827,8 @@ class Elf32_Sym:
         st_other, b = uint8.from_bytes(b, little=little)
         st_shndx, b = uint16.from_bytes(b, little=little)
 
-        return Elf32_Sym(st_name, st_value, st_size, st_info, st_other, st_shndx), b
+        return Elf32_Sym(st_name.integer, st_value.integer, st_size.integer,
+                st_info.integer, st_other.integer, st_shndx.integer), b
 
     def __len__(self):
         return len(bytes(self))
