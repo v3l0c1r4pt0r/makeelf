@@ -221,6 +221,7 @@ class ELF:
         ret = ELF(None, None, None, None)
         ret.Elf, b = Elf32.from_bytes(b)
         ret.little = ret.Elf.little
+        # TODO: catch all SHT_STRTAB and SHT_SYMTAB and convert
         return ret, b
 
     def from_file(filename):
@@ -412,12 +413,14 @@ class ELF:
         try:
             strtab_hdr, strtab = self.get_section_by_name('.strtab')
         except:
+            # TODO: exception driven development
             # strtab not found, create
             self.append_special_section('.strtab')
             strtab_hdr, strtab = self.get_section_by_name('.strtab')
 
         # find .symbtab for storing the symbol structure
         try:
+            # TODO: exception driven development, again
             symtab_hdr, symtab = self.get_section_by_name('.symtab')
         except:
             # symtab not found, create

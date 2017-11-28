@@ -431,6 +431,8 @@ class Elf32_Ehdr:
         little = e_ident.EI_DATA is ELFDATA.ELFDATA2LSB
         e_type, b = ET.from_bytes(b, little=little)
         e_machine, b = EM.from_bytes(b, little=little)
+        # TODO: use Elf*_Word or similar to be able to create second header -
+        # Elf64_Ehdr for amd64
         e_version, b = uint32.from_bytes(b, little=little)
         e_entry, b = uint32.from_bytes(b, little=little) # || 64b
         e_phoff, b = uint32.from_bytes(b, little=little) # || 64b
@@ -641,6 +643,7 @@ class SHF(Enum):
     SHF_TLS = 0x400
     SHF_MASKOS = 0x0ff00000
     SHF_MASKPROC = 0xf0000000
+    # TODO: will not be an enum, but bitmap, implement first
 
 
 ## \class Elf32_Shdr
@@ -947,6 +950,8 @@ class Elf32:
         # create and populate buffer
         b = bytes(end_of_file)
         for off in headers:
+            # TODO: there's something wrong, when hdr is not bytes, but only
+            # simulates it
             hdr = headers[off]
             size = len(hdr)
 
@@ -986,6 +991,7 @@ class Elf32:
 
         # Sections
         sections = []
+        # TODO: support of section content handlers, i.e. _Strtab, _Symtab
         for i, Shdr in enumerate(Shdr_a):
             first = Shdr.sh_offset
             last = first + Shdr.sh_size
@@ -1003,6 +1009,7 @@ class Elf32:
 
 
 if __name__ == '__main__':
+    # TODO: make some real tests
     print('tests')
     print('obj->file')
     e_ident = Elf32_e_ident(EI_OSABI=ELFOSABI.ELFOSABI_GNU)
