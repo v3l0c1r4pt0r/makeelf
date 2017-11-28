@@ -424,6 +424,18 @@ class ELF:
             self.append_special_section('.symtab')
             symtab_hdr, symtab = self.get_section_by_name('.symtab')
 
+        # convert to _Strtab
+        if not isinstance(strtab, _Strtab):
+            strtab = _Strtab(strtab)
+            strtab_id = self.Elf.Shdr_table.index(strtab_hdr)
+            self.Elf.sections[strtab_id] = strtab # FIXME: bad hack
+
+        # convert to _Symtab
+        if not isinstance(symtab, _Symtab):
+            symtab = _Symtab(symtab)
+            symtab_id = self.Elf.Shdr_table.index(symtab_hdr)
+            self.Elf.sections[symtab_id] = symtab # FIXME: bad hack
+
         # add symbol name to .strtab
         if sym_name is None:
             sym_off = 0
