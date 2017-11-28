@@ -59,3 +59,8 @@ elf.append_symbol('NULL', data_id, 0, 4)
 ```Python
 elf.Elf.Shdr_table[data_id].sh_flags = int(SHF.SHF_ALLOC)
 ```
+
+## License
+
+All the software here is licensed under GNU General Public License 3.0,
+available in LICENSE file.
