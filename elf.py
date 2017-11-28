@@ -61,13 +61,20 @@ class _Strtab:
 class _Symtab:
     """Helper class for handling symbol table"""
 
-    def __init__(self):
+    def __init__(self, b=None):
         # init list
         self.lst = []
 
-        # create entry for index STN_UNDEF and append to table
-        first = Elf32_Sym()
-        self.lst.append(first)
+        # if bytes provided
+        if b is not None:
+            # convert b to list of Elf32_Sym
+            while len(b) > 0:
+                sym, b = Elf32_Sym.from_bytes(b)
+                self.lst.append(sym)
+        else:
+            # create entry for index STN_UNDEF and append to table
+            first = Elf32_Sym()
+            self.lst.append(first)
 
     def __str__(self):
         return str(self.lst)
