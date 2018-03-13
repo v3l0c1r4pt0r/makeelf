@@ -3,8 +3,8 @@ from distutils.core import setup
 
 setup(
         name = 'makeelf',
-        packages = ['makeelf'],
-        version = '0.2.0',
+        packages = ['makeelf', 'makeelf.type'],
+        version = '0.2.1',
         description = 'ELF reader-writer library',
         url = 'https://github.com/v3l0c1r4pt0r/makeelf',
         author = 'v3l0c1r4pt0r',
