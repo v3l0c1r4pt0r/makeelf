@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
 ## \file elfstruct.py
 #  \brief Classes for ELF file serialization/deserialization
-from type.enum import Enum
-from type.align import align,unalign
-from type.uint8 import uint8
-from type.uint16 import uint16
-from type.uint32 import uint32
-import utils
+from makeelf.type.enum import Enum
+from makeelf.type.align import align,unalign
+from makeelf.type.uint8 import uint8
+from makeelf.type.uint16 import uint16
+from makeelf.type.uint32 import uint32
+import makeelf.utils
 
 ## \class ELFCLASS
 #  \brief File class

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 ## \file elf.py
 #  \brief Module for high-level manipulation of ELF files
-from elfstruct import *
+from makeelf.elfstruct import *
 import os
 
 class _Strtab:

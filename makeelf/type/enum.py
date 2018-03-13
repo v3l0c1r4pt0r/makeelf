@@ -4,7 +4,7 @@
 import struct
 import sys
 from enum import IntEnum
-from type.align import align
+from makeelf.type.align import align
 
 """Serializable enum object
 
