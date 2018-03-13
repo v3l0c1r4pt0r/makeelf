@@ -6,7 +6,9 @@ setup(
         packages = ['makeelf'],
         version = '0.2.0',
         description = 'ELF reader-writer library',
+        url = 'https://github.com/v3l0c1r4pt0r/makeelf',
         author = 'v3l0c1r4pt0r',
+        author_email = 'v3l0c1r4pt0r@gmail.com',
         classifiers = [
             'Programming Language :: Python',
             'Programming Language :: Python :: 3',
