@@ -17,4 +17,13 @@ setup(
             'Intended Audience :: Developers',
             'Topic :: Software Development :: Libraries :: Python Modules',
             ],
+        long_description = '''MakeELF is a Python library to parse, modify and create ELF binaries. It provides following features:
+
+ - easy to use, standard Python interface
+ - reading existing ELF files to Python representation
+ - modification of every aspect of ELF format structures
+ - ability to skip any validation to test other parsers for potential errors
+ - creating new valid ELF files with just one step
+ - easy serialization of every structure present in ELF file
+''',
         )
