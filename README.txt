@@ -24,7 +24,7 @@ API
 
 Creating new object
 
-    from elf import *
+    from makeelf.elf import *
     elf = ELF(e_machine=EM.EM_LKV373A)
     print(elf)
 
