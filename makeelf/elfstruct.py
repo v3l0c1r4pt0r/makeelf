@@ -959,7 +959,7 @@ class Elf32:
             aligned = align(bytes(off) + bytes(hdr), end_of_file)
 
             # xor into b
-            b = utils.bytes_xor(b, aligned)
+            b = makeelf.utils.bytes_xor(b, aligned)
         return b
 
     ##
