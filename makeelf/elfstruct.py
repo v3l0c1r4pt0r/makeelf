@@ -658,6 +658,9 @@ class Elf32_Shdr:
             self.sh_type = sh_type
         elif sh_type in map(int, SHT):
             self.sh_type = SHT(sh_type)
+        elif isinstance(sh_type, int):
+            # TODO: log warning message
+            self.sh_type = uint32(sh_type)
         else:
             self.sh_type = SHT[sh_type]
 
