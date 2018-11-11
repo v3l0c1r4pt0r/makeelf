@@ -579,7 +579,8 @@ class Elf32_Phdr:
         return Elf32_Phdr(p_type=p_type.integer, p_offset=p_offset.integer,
                 p_vaddr=p_vaddr.integer, p_paddr=p_paddr.integer,
                 p_filesz=p_filesz.integer, p_memsz=p_memsz.integer,
-                p_flags=p_flags.integer, p_align=p_align.integer), b
+                p_flags=p_flags.integer, p_align=p_align.integer, little=little
+                ), b
 
     def __len__(self):
         return len(bytes(self))
@@ -737,7 +738,7 @@ class Elf32_Shdr:
         return Elf32_Shdr(sh_name.integer, sh_type.integer, sh_flags.integer,
                 sh_addr.integer, sh_offset.integer, sh_size.integer,
                 sh_link.integer, sh_info.integer, sh_addralign.integer,
-                sh_entsize.integer), b
+                sh_entsize.integer, little=little), b
 
     def __len__(self):
         return len(bytes(self))
