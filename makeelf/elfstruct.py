@@ -965,17 +965,20 @@ class Elf32:
         blob = b
         Ehdr, b = Elf32_Ehdr.from_bytes(b)
 
+        # pass endianness from Ehdr to other headers
+        little = Ehdr.little
+
         # Program headers
         Phdr_a = []
         for i in range(Ehdr.e_phnum):
-            Phdr, b = Elf32_Phdr.from_bytes(b)
+            Phdr, b = Elf32_Phdr.from_bytes(b, little)
             Phdr_a.append(Phdr)
 
         # Section headers
         Shdr_a = []
         b = blob[Ehdr.e_shoff:]
         for i in range(Ehdr.e_shnum):
-            Shdr, b = Elf32_Shdr.from_bytes(b)
+            Shdr, b = Elf32_Shdr.from_bytes(b, little)
             Shdr_a.append(Shdr)
 
         # Sections
