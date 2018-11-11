@@ -665,7 +665,7 @@ class Elf32_Shdr:
             self.sh_type = SHT(sh_type)
         elif isinstance(sh_type, int):
             # TODO: log warning message
-            self.sh_type = uint32(sh_type)
+            self.sh_type = uint32(sh_type, little)
         else:
             self.sh_type = SHT[sh_type]
 
@@ -708,7 +708,7 @@ class Elf32_Shdr:
 
     def __bytes__(self):
         sh_name = uint32(self.sh_name, little=self.little)
-        sh_type = self.sh_type
+        sh_type = bytes(self.sh_type)
         sh_flags = uint32(self.sh_flags, little=self.little)
         sh_addr = uint32(self.sh_addr, little=self.little)
         sh_offset = uint32(self.sh_offset, little=self.little)
@@ -717,6 +717,11 @@ class Elf32_Shdr:
         sh_info = uint32(self.sh_info, little=self.little)
         sh_addralign = uint32(self.sh_addralign, little=self.little)
         sh_entsize = uint32(self.sh_entsize, little=self.little)
+
+        # make sure sh_type is enum, before reversing bytes
+        # other way it may be already reversed
+        if self.little and isinstance(self.sh_type, SHT):
+            sh_type = bytes(reversed(sh_type))
 
         return bytes(sh_name) + bytes(sh_type) + bytes(sh_flags) + \
                 bytes(sh_addr) + bytes(sh_offset) + bytes(sh_size) + \
