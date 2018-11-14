@@ -960,10 +960,17 @@ class Elf32:
             # TODO: there's something wrong, when hdr is not bytes, but only
             # simulates it
             hdr = headers[off]
+            if isinstance(hdr, list):
+                hdr_as_bytes = b''
+                for e in hdr:
+                    hdr_as_bytes += bytes(e)
+                hdr = hdr_as_bytes
+            else:
+                hdr = bytes(hdr)
             size = len(hdr)
 
             # expand to file size
-            aligned = align(bytes(off) + bytes(hdr), end_of_file)
+            aligned = align(bytes(off) + hdr, end_of_file)
 
             # xor into b
             b = makeelf.utils.bytes_xor(b, aligned)

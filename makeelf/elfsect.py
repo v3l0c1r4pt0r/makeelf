@@ -112,3 +112,24 @@ class Elf32_Dyn:
 
     def __len__(self):
         return len(bytes(self))
+
+
+if __name__ == '__main__':
+    # TODO: make some real tests
+    print('tests')
+    print('Elf32_Dyn as section')
+    from makeelf.elf import *
+    e,b = ELF.from_file('libimp.so')
+    expected = bytes(e)
+    h,b = e.get_section_by_name('.dynamic')
+    dynamic = []
+    while len(b) > 0:
+        dyn, b = Elf32_Dyn.from_bytes(b, e.little)
+        dynamic.append(dyn)
+    e.Elf.sections[e.Elf.Shdr_table.index(h)] = dynamic
+    b = bytes(e)
+    actual = b
+    for i, byte in enumerate(actual):
+        if byte != expected[i]:
+            raise Exception('objects differ at offset {} (expected {}, got {})'.format(i,byte,expected[i]))
+    print('OK')
