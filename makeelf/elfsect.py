@@ -2,6 +2,8 @@
 ## \file elfsect.py
 #  \brief Classes for ELF section interpretation
 from makeelf.type.enum import Enum
+from makeelf.type.align import align,unalign
+from makeelf.type.uint32 import uint32
 
 ## \class DT
 #  \brief Dynamic Array Tags
@@ -49,3 +51,64 @@ class DT(Enum):
     DT_HIOS = 0x6ffff000
     DT_LOPROC = 0x70000000
     DT_HIPROC = 0x7fffffff
+
+
+## \class Elf32_Dyn
+#  \brief .dynamic section
+class Elf32_Dyn:
+
+    def __init__(self, d_tag=DT.DT_NULL, d_val=None, d_ptr=None, little=False):
+        if isinstance(d_tag, DT):
+            ## Value of type \link DT \endlink
+            #  \details Controls if d_val or d_ptr is present
+            self.d_tag = d_tag
+        elif d_tag in map(int, DT):
+            self.d_tag = DT(d_tag)
+        elif isinstance(d_tag, int):
+            # TODO: log warning message
+            self.d_tag = uint32(d_tag, little)
+        else:
+            self.d_tag = DT[d_tag]
+
+        # TODO: set only one of d_val or d_ptr
+
+        ## Integer of various interpretations
+        self.d_val = d_val
+
+        ## Program virtual addresses
+        self.d_ptr = d_ptr
+
+        ## Header endianness indicator
+        #  \details Is true, if header values are meant to be stored as
+        #  little-endian or false otherwise
+        self.little = little # should not be used, but for consistency set it
+
+    def __str__(self):
+        # TODO: print d_val/d_ptr conditionally
+        return '{d_tag=%s, d_val=%s, d_ptr=%s}' % (self.d_tag, self.d_val,
+                self.d_ptr)
+
+    def __repr__(self):
+        return '%s(%s, %s, %s)' % (type(self).__name__,
+                self.d_tag, repr(self.d_val), repr(self.d_ptr))
+
+    def __bytes__(self):
+        d_tag = bytes(self.d_tag)
+        d_val = uint32(self.d_val, little=self.little)
+        d_ptr = uint32(self.d_ptr, little=self.little)
+
+        # make sure d_tag is enum, before reversing bytes
+        # other way it may be already reversed
+        if self.little and isinstance(self.d_tag, DT):
+            d_tag = bytes(reversed(d_tag))
+
+        return bytes(d_tag) + bytes(d_val)
+
+    def from_bytes(b, little=False):
+        d_tag, b = uint32.from_bytes(b, little)
+        d_val, b = uint32.from_bytes(b, little)
+        d_ptr = d_val
+        return Elf32_Dyn(d_tag.integer, d_val.integer, d_ptr.integer), b
+
+    def __len__(self):
+        return len(bytes(self))
