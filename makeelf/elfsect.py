@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 ## \file elfsect.py
 #  \brief Classes for ELF section interpretation
+import unittest
 from makeelf.type.enum import Enum
 from makeelf.type.align import align,unalign
 from makeelf.type.uint32 import uint32
@@ -112,6 +113,74 @@ class Elf32_Dyn:
 
     def __len__(self):
         return len(bytes(self))
+
+
+class Elf32_DynTests(unittest.TestCase):
+
+    tv_endianness = [True, False]
+
+    tv_bytes = [b' \0\0\0\1\2\3\4', b'\0\0\0 \4\3\2\1']
+
+    tv_obj = [\
+            Elf32_Dyn(DT.DT_ENCODING, 0x04030201, little=True),
+            Elf32_Dyn(DT.DT_ENCODING, 0x04030201)]
+
+    def test_str(self):
+        for i in range(len(Elf32_DynTests.tv_bytes)):
+            tv_bytes = Elf32_DynTests.tv_bytes[i]
+            tv_obj = Elf32_DynTests.tv_obj[i]
+
+            invector = tv_obj
+            expected = '{d_tag=DT.DT_ENCODING, d_val=67305985, d_ptr=None}'
+            actual = str(invector)
+
+            self.assertEqual(expected, actual)
+
+    def test_repr(self):
+        for i in range(len(Elf32_DynTests.tv_bytes)):
+            tv_bytes = Elf32_DynTests.tv_bytes[i]
+            tv_obj = Elf32_DynTests.tv_obj[i]
+
+            invector = tv_obj
+            expected = 'Elf32_Dyn(DT.DT_ENCODING, 67305985, None)'
+            actual = repr(invector)
+
+            self.assertEqual(expected, actual)
+
+    def test_len(self):
+        for i in range(len(Elf32_DynTests.tv_bytes)):
+            tv_bytes = Elf32_DynTests.tv_bytes[i]
+            tv_obj = Elf32_DynTests.tv_obj[i]
+
+            invector = tv_obj
+            expected = 8
+            actual = len(invector)
+
+            self.assertEqual(expected, actual)
+
+    def test_bytes(self):
+        for i in range(len(Elf32_DynTests.tv_bytes)):
+            tv_bytes = Elf32_DynTests.tv_bytes[i]
+            tv_obj = Elf32_DynTests.tv_obj[i]
+
+            invector = tv_obj
+            expected = tv_bytes
+            actual = bytes(invector)
+
+            self.assertEqual(expected, actual)
+
+    @unittest.skip('d_val and d_ptr should be selectively hidden - it is not')
+    def test_from_bytes(self):
+        for i in range(len(Elf32_DynTests.tv_bytes)):
+            tv_bytes = Elf32_DynTests.tv_bytes[i]
+            tv_obj = Elf32_DynTests.tv_obj[i]
+            tv_endianness = Elf32_DynTests.tv_endianness[i]
+
+        invector = tv_bytes + b'\x13\x37'
+        expected = tv_obj, b'\x13\x37'
+        actual = Elf32_Dyn.from_bytes(invector, tv_endianness)
+
+        self.assertEqual(expected, actual)
 
 
 if __name__ == '__main__':
