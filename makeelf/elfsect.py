@@ -110,7 +110,7 @@ class Elf32_Dyn:
         d_tag, b = uint32.from_bytes(b, little)
         d_val, b = uint32.from_bytes(b, little)
         d_ptr = d_val
-        return Elf32_Dyn(d_tag.integer, d_val.integer, d_ptr.integer), b
+        return Elf32_Dyn(d_tag.integer, d_val.integer, d_ptr.integer, little), b
 
     def __len__(self):
         return len(bytes(self))
@@ -288,16 +288,28 @@ if __name__ == '__main__':
     print('Elf32_Dyn as section')
     from makeelf.elf import *
     e,b = ELF.from_file('libimp.so')
-    expected = bytes(e)
+    expected = bytes(e.Elf)
     h,b = e.get_section_by_name('.dynamic')
+    print('.dynamic', h)
     dynamic = []
     while len(b) > 0:
         dyn, b = Elf32_Dyn.from_bytes(b, e.little)
         dynamic.append(dyn)
     e.Elf.sections[e.Elf.Shdr_table.index(h)] = dynamic
-    b = bytes(e)
+    b = bytes(e.Elf)
     actual = b
+    print('serialized')
+    fd = os.open('libimp.tmp.so', os.O_WRONLY | os.O_CREAT | os.O_TRUNC)
+    os.write(fd, b)
+    os.close(fd)
+    print('written')
+    for i in range(len(dynamic)):
+        expdyn = e.get_section_by_name('.dynamic')[1][i]
+        actdyn = dynamic[i]
+        if expdyn != actdyn:
+            raise Exception(str(expdyn) + '\n' + str(actdyn))
+    print('dyns deserialized correctly')
     for i, byte in enumerate(actual):
         if byte != expected[i]:
-            raise Exception('objects differ at offset {} (expected {}, got {})'.format(i,byte,expected[i]))
+            raise Exception('objects differ at offset {} (expected {}, got {})'.format(hex(i),hex(byte),hex(expected[i])))
     print('OK')
