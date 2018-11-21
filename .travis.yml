@@ -6,6 +6,6 @@ install:
   - pip install .
 # command to run tests
 script:
-  - python3 makeelf/elfstruct.py
-  - python3 makeelf/elfsect.py
+# - python3 makeelf/elfstruct.py
+# - python3 makeelf/elfsect.py
   - python3 -m unittest makeelf.elfsect
