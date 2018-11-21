@@ -5,6 +5,7 @@ import unittest
 from makeelf.type.enum import Enum
 from makeelf.type.align import align,unalign
 from makeelf.type.uint32 import uint32
+from makeelf.elfstruct import SHN
 
 ## \class DT
 #  \brief Dynamic Array Tags
@@ -181,6 +182,104 @@ class Elf32_DynTests(unittest.TestCase):
         actual = Elf32_Dyn.from_bytes(invector, tv_endianness)
 
         self.assertEqual(expected, actual)
+
+
+## \class STB
+#  \brief Symbol Table Binding
+class STB(Enum):
+    STB_LOCAL = 0
+    STB_GLOBAL = 1
+    STB_WEAK = 2
+    STB_LOOS = 10
+    STB_HIOS = 12
+    STB_LOPROC = 13
+    STB_HIPROC = 15
+
+
+## \class STT
+#  \brief Symbol Types
+class STT(Enum):
+    STT_NOTYPE = 0
+    STT_OBJECT = 1
+    STT_FUNC = 2
+    STT_SECTION = 3
+    STT_FILE = 4
+    STT_COMMON = 5
+    STT_TLS = 6
+    STT_LOOS = 10
+    STT_HIOS = 12
+    STT_LOPROC = 13
+    STT_HIPROC = 15
+
+
+## \class STV
+#  \brief Symbol Visibility
+class STV(Enum):
+    STV_DEFAULT = 0
+    STV_INTERNAL = 1
+    STV_HIDDEN = 2
+    STV_PROTECTED = 3
+
+
+## \class Elf32_Sym
+#  \brief Symbol Table Entry
+class Elf32_Sym:
+
+    def __init__(self, st_name=0, st_value=0, st_size=0, st_info=0, st_other=0,
+            st_shndx=SHN.SHN_UNDEF, little=False):
+        ## Symbol name in .strtab
+        self.st_name = st_name
+        ## Symbol value
+        self.st_value = st_value
+        ## Size of the symbol
+        self.st_size = st_size
+        ## Packed values of \link STB \endlink and \link STT \endlink
+        self.st_info = st_info
+        ## Packed values of \link STV \endlink
+        self.st_other = st_other
+        ## Index of section, symbol is based on
+        self.st_shndx = st_shndx
+
+        ## Header endianness indicator
+        #  \details Is true, if header values are meant to be stored as
+        #  little-endian or false otherwise
+        self.little = little
+
+    def __str__(self):
+        return '{st_name=%s, st_value=%s, st_size=%s, st_info=%s, ' \
+                'st_other=%s, st_shndx=%s}' % (self.st_name, self.st_value,
+                        self.st_size, self.st_info, self.st_other,
+                        self.st_shndx)
+
+    def __repr__(self):
+        return '%s(%s, %s, %s, %s, %s, %s)' % (type(self).__name__,
+                self.st_name, self.st_value, self.st_size, self.st_info,
+                self.st_other, self.st_shndx)
+
+    def __bytes__(self):
+        st_name = uint32(self.st_name, little=self.little)
+        st_value = uint32(self.st_value, little=self.little)
+        st_size = uint32(self.st_size, little=self.little)
+        st_info = uint8(self.st_info, little=self.little)
+        st_other = uint8(self.st_other, little=self.little)
+        st_shndx = uint16(self.st_shndx, little=self.little)
+
+        return bytes(st_name) + bytes(st_value) + bytes(st_size) + \
+                bytes(st_info) + bytes(st_other) + bytes(st_shndx)
+
+    def from_bytes(b, little=False):
+        st_name, b = uint32.from_bytes(b, little=little)
+        st_value, b = uint32.from_bytes(b, little=little)
+        st_size, b = uint32.from_bytes(b, little=little)
+        st_info, b = uint8.from_bytes(b, little=little)
+        st_other, b = uint8.from_bytes(b, little=little)
+        st_shndx, b = uint16.from_bytes(b, little=little)
+
+        return Elf32_Sym(st_name.integer, st_value.integer, st_size.integer,
+                st_info.integer, st_other.integer, st_shndx.integer), b
+
+    def __len__(self):
+        return len(bytes(self))
 
 
 if __name__ == '__main__':

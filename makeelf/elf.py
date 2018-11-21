@@ -2,6 +2,7 @@
 ## \file elf.py
 #  \brief Module for high-level manipulation of ELF files
 from makeelf.elfstruct import *
+from makeelf.elfsect import *
 import os
 
 class _Strtab:
