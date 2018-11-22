@@ -278,7 +278,7 @@ class Elf32_Sym:
         st_shndx, b = uint16.from_bytes(b, little=little)
 
         return Elf32_Sym(st_name.integer, st_value.integer, st_size.integer,
-                st_info.integer, st_other.integer, st_shndx.integer), b
+                st_info.integer, st_other.integer, st_shndx.integer, little), b
 
     def __len__(self):
         return len(bytes(self))
