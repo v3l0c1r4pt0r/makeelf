@@ -96,6 +96,14 @@ class Elf32_Dyn:
         return '%s(%s, %s, %s)' % (type(self).__name__,
                 self.d_tag, repr(self.d_val), repr(self.d_ptr))
 
+    def __eq__(self, rhs):
+        # NOTE: little is ignored, is it wrong?
+        # TODO: compare d_val OR d_ptr, not both
+        return type(self) == type(rhs) and \
+                self.d_tag == rhs.d_tag and \
+                self.d_val == rhs.d_val and \
+                self.d_ptr == rhs.d_ptr
+
     def __bytes__(self):
         d_tag = bytes(self.d_tag)
         d_val = uint32(self.d_val, little=self.little)
@@ -257,6 +265,16 @@ class Elf32_Sym:
         return '%s(%s, %s, %s, %s, %s, %s)' % (type(self).__name__,
                 self.st_name, self.st_value, self.st_size, self.st_info,
                 self.st_other, self.st_shndx)
+
+    def __eq__(self, rhs):
+        # NOTE: little is ignored, is it wrong?
+        return type(self) == type(rhs) and \
+                self.st_name == rhs.st_name and \
+                self.st_value == rhs.st_value and \
+                self.st_size == rhs.st_size and \
+                self.st_info == rhs.st_info and \
+                self.st_other == rhs.st_other and \
+                self.st_shndx == rhs.st_shndx
 
     def __bytes__(self):
         st_name = uint32(self.st_name, little=self.little)
