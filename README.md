@@ -13,6 +13,27 @@ provides following features:
 * creating new valid ELF files with just one step
 * easy serialization of every structure present in ELF file
 
+## Installation
+
+MakeELF could be installed either using PyPI and pip3 tool or manually with help
+of setup.py script.
+
+### Install from PyPI
+
+It is as simple as typing:
+
+```shell
+pip3 install makeelf
+```
+
+### Manual installation
+
+Clone the Github repository and in root of the project execute:
+
+```shell
+python3 setup.py install
+```
+
 ## API
 
 ### Creating new object
