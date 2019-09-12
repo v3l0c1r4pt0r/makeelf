@@ -5,6 +5,8 @@ import unittest
 from makeelf.type.enum import Enum
 from makeelf.type.align import align,unalign
 from makeelf.type.uint32 import uint32
+from makeelf.type.uint16 import uint16
+from makeelf.type.uint8 import uint8
 from makeelf.elfstruct import SHN
 
 ## \class DT
