@@ -154,7 +154,7 @@ class ELF:
 
         # add .shstrtab into section header and section list
         shstrtab_hdr = Elf32_Shdr(sh_name=shstrtab_name, sh_type=SHT.SHT_STRTAB,
-                sh_addralign=1)
+                sh_addralign=1, little=self.little)
         self.Elf.Shdr_table.append(shstrtab_hdr)
         self.Elf.sections.append(shstrtab) # this is ok, as long as shstrtab has
         # bytes() implementation
