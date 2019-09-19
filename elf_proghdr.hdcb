@@ -8,7 +8,7 @@ define padding 1 0 8 # array
 
 use magic
 use class class_l
-use endianness
+use endianness endian_l
 use version
 use abi
 use padding 8
@@ -27,12 +27,14 @@ define e_phentsize 2
 define e_phnum 2
 
 let cursor+=12
-use e_phoff e_phoff_b
+[ $endian_l ] &&   use e_phoff e_phoff_l && let e_phoff_a=$e_phoff_l
+[ ! $endian_l ] && use e_phoff e_phoff_b && let e_phoff_a=$e_phoff_b
 let cursor+=10
 use e_phentsize
-use e_phnum e_phnum_b
+[ $endian_l ] &&   use e_phnum e_phnum_l && let e_phnum_a=$e_phnum_l
+[ ! $endian_l ] && use e_phnum e_phnum_b && let e_phnum_a=$e_phnum_b
 
-let cursor=$e_phoff_b
+let cursor=$e_phoff_a
 
 define p_type 4
 define p_flags 4
@@ -43,7 +45,7 @@ define p_filesz $wlen
 define p_memsz $wlen
 define p_align $wlen
 
-for i in $(seq 1 $e_phnum_b); do
+for i in $(seq 1 $e_phnum_a); do
   use p_type
   if [ $wlen -eq 8 ]; then
     use p_flags

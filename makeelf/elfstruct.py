@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
 ## \file elfstruct.py
 #  \brief Classes for ELF file serialization/deserialization
-from type.enum import Enum
-from type.align import align,unalign
-from type.uint8 import uint8
-from type.uint16 import uint16
-from type.uint32 import uint32
-import utils
+from makeelf.type.enum import Enum
+from makeelf.type.align import align,unalign
+from makeelf.type.uint8 import uint8
+from makeelf.type.uint16 import uint16
+from makeelf.type.uint32 import uint32
+import makeelf.utils
 
 ## \class ELFCLASS
 #  \brief File class
@@ -403,19 +403,20 @@ class Elf32_Ehdr:
             self.e_shentsize, self.e_shnum, self.e_shstrndx)
 
     def __bytes__(self):
+        little = self.little
         e_type = bytes(self.e_type)
         e_machine = bytes(self.e_machine)
-        e_version = uint32(self.e_version)
-        e_entry = uint32(self.e_entry)
-        e_phoff = uint32(self.e_phoff)
-        e_shoff = uint32(self.e_shoff)
-        e_flags = uint32(self.e_flags)
-        e_ehsize = uint16(self.e_ehsize)
-        e_phentsize = uint16(self.e_phentsize)
-        e_phnum = uint16(self.e_phnum)
-        e_shentsize = uint16(self.e_shentsize)
-        e_shnum = uint16(self.e_shnum)
-        e_shstrndx = uint16(self.e_shstrndx)
+        e_version = uint32(self.e_version, little)
+        e_entry = uint32(self.e_entry, little)
+        e_phoff = uint32(self.e_phoff, little)
+        e_shoff = uint32(self.e_shoff, little)
+        e_flags = uint32(self.e_flags, little)
+        e_ehsize = uint16(self.e_ehsize, little)
+        e_phentsize = uint16(self.e_phentsize, little)
+        e_phnum = uint16(self.e_phnum, little)
+        e_shentsize = uint16(self.e_shentsize, little)
+        e_shnum = uint16(self.e_shnum, little)
+        e_shstrndx = uint16(self.e_shstrndx, little)
         if self.little:
             e_type = bytes(reversed(e_type))
             e_machine = bytes(reversed(e_machine))
@@ -433,6 +434,8 @@ class Elf32_Ehdr:
         little = e_ident.EI_DATA is ELFDATA.ELFDATA2LSB
         e_type, b = ET.from_bytes(b, little=little)
         e_machine, b = EM.from_bytes(b, little=little)
+        # TODO: use Elf*_Word or similar to be able to create second header -
+        # Elf64_Ehdr for amd64
         e_version, b = uint32.from_bytes(b, little=little)
         e_entry, b = uint32.from_bytes(b, little=little) # || 64b
         e_phoff, b = uint32.from_bytes(b, little=little) # || 64b
@@ -578,7 +581,8 @@ class Elf32_Phdr:
         return Elf32_Phdr(p_type=p_type.integer, p_offset=p_offset.integer,
                 p_vaddr=p_vaddr.integer, p_paddr=p_paddr.integer,
                 p_filesz=p_filesz.integer, p_memsz=p_memsz.integer,
-                p_flags=p_flags.integer, p_align=p_align.integer), b
+                p_flags=p_flags.integer, p_align=p_align.integer, little=little
+                ), b
 
     def __len__(self):
         return len(bytes(self))
@@ -643,6 +647,7 @@ class SHF(Enum):
     SHF_TLS = 0x400
     SHF_MASKOS = 0x0ff00000
     SHF_MASKPROC = 0xf0000000
+    # TODO: will not be an enum, but bitmap, implement first
 
 
 ## \class Elf32_Shdr
@@ -660,6 +665,9 @@ class Elf32_Shdr:
             self.sh_type = sh_type
         elif sh_type in map(int, SHT):
             self.sh_type = SHT(sh_type)
+        elif isinstance(sh_type, int):
+            # TODO: log warning message
+            self.sh_type = uint32(sh_type, little)
         else:
             self.sh_type = SHT[sh_type]
 
@@ -702,7 +710,7 @@ class Elf32_Shdr:
 
     def __bytes__(self):
         sh_name = uint32(self.sh_name, little=self.little)
-        sh_type = self.sh_type
+        sh_type = bytes(self.sh_type)
         sh_flags = uint32(self.sh_flags, little=self.little)
         sh_addr = uint32(self.sh_addr, little=self.little)
         sh_offset = uint32(self.sh_offset, little=self.little)
@@ -711,6 +719,11 @@ class Elf32_Shdr:
         sh_info = uint32(self.sh_info, little=self.little)
         sh_addralign = uint32(self.sh_addralign, little=self.little)
         sh_entsize = uint32(self.sh_entsize, little=self.little)
+
+        # make sure sh_type is enum, before reversing bytes
+        # other way it may be already reversed
+        if self.little and isinstance(self.sh_type, SHT):
+            sh_type = bytes(reversed(sh_type))
 
         return bytes(sh_name) + bytes(sh_type) + bytes(sh_flags) + \
                 bytes(sh_addr) + bytes(sh_offset) + bytes(sh_size) + \
@@ -732,105 +745,7 @@ class Elf32_Shdr:
         return Elf32_Shdr(sh_name.integer, sh_type.integer, sh_flags.integer,
                 sh_addr.integer, sh_offset.integer, sh_size.integer,
                 sh_link.integer, sh_info.integer, sh_addralign.integer,
-                sh_entsize.integer), b
-
-    def __len__(self):
-        return len(bytes(self))
-
-
-## \class STB
-#  \brief Symbol Table Binding
-class STB(Enum):
-    STB_LOCAL = 0
-    STB_GLOBAL = 1
-    STB_WEAK = 2
-    STB_LOOS = 10
-    STB_HIOS = 12
-    STB_LOPROC = 13
-    STB_HIPROC = 15
-
-
-## \class STT
-#  \brief Symbol Types
-class STT(Enum):
-    STT_NOTYPE = 0
-    STT_OBJECT = 1
-    STT_FUNC = 2
-    STT_SECTION = 3
-    STT_FILE = 4
-    STT_COMMON = 5
-    STT_TLS = 6
-    STT_LOOS = 10
-    STT_HIOS = 12
-    STT_LOPROC = 13
-    STT_HIPROC = 15
-
-
-## \class STV
-#  \brief Symbol Visibility
-class STV(Enum):
-    STV_DEFAULT = 0
-    STV_INTERNAL = 1
-    STV_HIDDEN = 2
-    STV_PROTECTED = 3
-
-
-## \class Elf32_Sym
-#  \brief Symbol Table Entry
-class Elf32_Sym:
-
-    def __init__(self, st_name=0, st_value=0, st_size=0, st_info=0, st_other=0,
-            st_shndx=SHN.SHN_UNDEF, little=False):
-        ## Symbol name in .strtab
-        self.st_name = st_name
-        ## Symbol value
-        self.st_value = st_value
-        ## Size of the symbol
-        self.st_size = st_size
-        ## Packed values of \link STB \endlink and \link STT \endlink
-        self.st_info = st_info
-        ## Packed values of \link STV \endlink
-        self.st_other = st_other
-        ## Index of section, symbol is based on
-        self.st_shndx = st_shndx
-
-        ## Header endianness indicator
-        #  \details Is true, if header values are meant to be stored as
-        #  little-endian or false otherwise
-        self.little = little
-
-    def __str__(self):
-        return '{st_name=%s, st_value=%s, st_size=%s, st_info=%s, ' \
-                'st_other=%s, st_shndx=%s}' % (self.st_name, self.st_value,
-                        self.st_size, self.st_info, self.st_other,
-                        self.st_shndx)
-
-    def __repr__(self):
-        return '%s(%s, %s, %s, %s, %s, %s)' % (type(self).__name__,
-                self.st_name, self.st_value, self.st_size, self.st_info,
-                self.st_other, self.st_shndx)
-
-    def __bytes__(self):
-        st_name = uint32(self.st_name, little=self.little)
-        st_value = uint32(self.st_value, little=self.little)
-        st_size = uint32(self.st_size, little=self.little)
-        st_info = uint8(self.st_info, little=self.little)
-        st_other = uint8(self.st_other, little=self.little)
-        st_shndx = uint16(self.st_shndx, little=self.little)
-
-        return bytes(st_name) + bytes(st_value) + bytes(st_size) + \
-                bytes(st_info) + bytes(st_other) + bytes(st_shndx)
-
-    def from_bytes(b, little=False):
-        st_name, b = uint32.from_bytes(b, little=little)
-        st_value, b = uint32.from_bytes(b, little=little)
-        st_size, b = uint32.from_bytes(b, little=little)
-        st_info, b = uint8.from_bytes(b, little=little)
-        st_other, b = uint8.from_bytes(b, little=little)
-        st_shndx, b = uint16.from_bytes(b, little=little)
-
-        return Elf32_Sym(st_name.integer, st_value.integer, st_size.integer,
-                st_info.integer, st_other.integer, st_shndx.integer), b
+                sh_entsize.integer, little=little), b
 
     def __len__(self):
         return len(bytes(self))
@@ -946,14 +861,23 @@ class Elf32:
         # create and populate buffer
         b = bytes(end_of_file)
         for off in headers:
+            # TODO: there's something wrong, when hdr is not bytes, but only
+            # simulates it
             hdr = headers[off]
+            if isinstance(hdr, list):
+                hdr_as_bytes = b''
+                for e in hdr:
+                    hdr_as_bytes += bytes(e)
+                hdr = hdr_as_bytes
+            else:
+                hdr = bytes(hdr)
             size = len(hdr)
 
             # expand to file size
-            aligned = align(bytes(off) + bytes(hdr), end_of_file)
+            aligned = align(bytes(off) + hdr, end_of_file)
 
             # xor into b
-            b = utils.bytes_xor(b, aligned)
+            b = makeelf.utils.bytes_xor(b, aligned)
         return b
 
     ##
@@ -967,21 +891,25 @@ class Elf32:
         blob = b
         Ehdr, b = Elf32_Ehdr.from_bytes(b)
 
+        # pass endianness from Ehdr to other headers
+        little = Ehdr.little
+
         # Program headers
         Phdr_a = []
         for i in range(Ehdr.e_phnum):
-            Phdr, b = Elf32_Phdr.from_bytes(b)
+            Phdr, b = Elf32_Phdr.from_bytes(b, little)
             Phdr_a.append(Phdr)
 
         # Section headers
         Shdr_a = []
         b = blob[Ehdr.e_shoff:]
         for i in range(Ehdr.e_shnum):
-            Shdr, b = Elf32_Shdr.from_bytes(b)
+            Shdr, b = Elf32_Shdr.from_bytes(b, little)
             Shdr_a.append(Shdr)
 
         # Sections
         sections = []
+        # TODO: support of section content handlers, i.e. _Strtab, _Symtab
         for i, Shdr in enumerate(Shdr_a):
             first = Shdr.sh_offset
             last = first + Shdr.sh_size
@@ -999,6 +927,7 @@ class Elf32:
 
 
 if __name__ == '__main__':
+    # TODO: make some real tests
     print('tests')
     print('obj->file')
     e_ident = Elf32_e_ident(EI_OSABI=ELFOSABI.ELFOSABI_GNU)

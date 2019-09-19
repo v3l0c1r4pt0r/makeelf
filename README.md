@@ -13,12 +13,33 @@ provides following features:
 * creating new valid ELF files with just one step
 * easy serialization of every structure present in ELF file
 
+## Installation
+
+MakeELF could be installed either using PyPI and pip3 tool or manually with help
+of setup.py script.
+
+### Install from PyPI
+
+It is as simple as typing:
+
+```shell
+pip3 install makeelf
+```
+
+### Manual installation
+
+Clone the Github repository and in root of the project execute:
+
+```shell
+python3 setup.py install
+```
+
 ## API
 
 ### Creating new object
 
 ```Python
-from elf import *
+from makeelf.elf import *
 elf = ELF(e_machine=EM.EM_LKV373A)
 print(elf)
 ```
@@ -59,3 +80,8 @@ elf.append_symbol('NULL', data_id, 0, 4)
 ```Python
 elf.Elf.Shdr_table[data_id].sh_flags = int(SHF.SHF_ALLOC)
 ```
+
+## License
+
+All the software here is licensed under GNU General Public License 3.0,
+available in LICENSE file.

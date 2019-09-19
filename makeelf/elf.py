@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 ## \file elf.py
 #  \brief Module for high-level manipulation of ELF files
-from elfstruct import *
+from makeelf.elfstruct import *
+from makeelf.elfsect import *
 import os
 
 class _Strtab:
@@ -153,7 +154,7 @@ class ELF:
 
         # add .shstrtab into section header and section list
         shstrtab_hdr = Elf32_Shdr(sh_name=shstrtab_name, sh_type=SHT.SHT_STRTAB,
-                sh_addralign=1)
+                sh_addralign=1, little=self.little)
         self.Elf.Shdr_table.append(shstrtab_hdr)
         self.Elf.sections.append(shstrtab) # this is ok, as long as shstrtab has
         # bytes() implementation
@@ -221,6 +222,7 @@ class ELF:
         ret = ELF(None, None, None, None)
         ret.Elf, b = Elf32.from_bytes(b)
         ret.little = ret.Elf.little
+        # TODO: catch all SHT_STRTAB and SHT_SYMTAB and convert
         return ret, b
 
     def from_file(filename):
@@ -232,8 +234,10 @@ class ELF:
 
         return ELF.from_bytes(b)
 
+    ## Get section with header based on its name
+    #  \param sec_name Name of the section
+    #  \returns Tuple of header and section
     def get_section_by_name(self, sec_name):
-        """Returns section header and content as tuple, based on their name"""
         if isinstance(sec_name, str):
             sec_name = bytes(sec_name, 'utf-8')
         elif not isinstance(sec_name, bytes):
@@ -299,21 +303,23 @@ class ELF:
 
         return ret
 
+    ## Add new section to ELF file
+    #  \details Name is automatically appended to .shstrtab section (section is
+    #  created if does not exists)
+    #  \param sec_name Name of the section to append
+    #  \returns ID of newly added section
     def append_section(self, sec_name, sec_data, sec_addr):
-        """Add new section to ELF file
-
-        Name is automatically appended to .shstrtab section. Return value is ID
-        of newly added section"""
         return self._append_section(sec_name, sec_data, sec_addr,
                 sh_type=SHT.SHT_PROGBITS, sh_flags=0, sh_link=0, sh_info=0,
                 sh_addralign=1, sh_entsize=0)
 
+    ## Add new special section to ELF file
+    #  \details This function allows to add one of the special, structured
+    #  sections to ELF file. Name is automatically appended to .shstrtab
+    #  section
+    #  \param sec_name Name of the section to append
+    #  \returns ID of newly added section
     def append_special_section(self, sec_name):
-        """Add new special section to ELF file
-
-        This function allows to add one of the special, structured sections to
-        ELF file. Name is automatically appended to .shstrtab section. Return
-        value is ID of newly added section"""
         # sec_name should always by bytes
         if isinstance(sec_name, str):
             sec_name = bytes(sec_name, 'utf-8')
@@ -335,15 +341,15 @@ class ELF:
         raise Exception('%s is not a special section name or is not ' \
                 'supported yet' % sec_name)
 
+    ## Add new program header, describing segment in memory
+    #  \details This function is for executable and shared objects only. On
+    #  other types of ELFs causes exception. Currently appended segment can only
+    #  be of type PT_LOAD
+    #  \param sec_id id of section already describing this segment
+    #  \param addr virtual address at which segment will be loaded
+    #  \param mem_size size of segment after loading into memory
+    #  \returns ID of newly added segment
     def append_segment(self, sec_id, addr=None, mem_size=-1, flags='rwx'):
-        """Add new program header, desribing segment in memory
-
-        This function is for executable and shared objects only. On other types
-        of ELFs causes exception. Currently appended segment can only be of type
-        PT_LOAD. Return value is ID of newly added segment
-            sec_id   - id of section already describing this segment
-            addr     - virtual address at which segment will be loaded
-            mem_size - size of segment after loading into memory"""
         if self.Elf.Ehdr.e_type not in [ET.ET_EXEC, ET.ET_DYN]:
             raise Exception('ELF type is not executable neither shared (e_type'\
                     ' is %s)' % self.hdr.e_type)
@@ -384,17 +390,16 @@ class ELF:
         self.Elf.Phdr_table.append(Phdr)
         return ret
 
+    ## Append new symbol to symbol table
+    #  \details Creates symbol table, if necessary, adds new symbol name to
+    #  symbol string table and symbol descriptor to symbol table.
+    #  \param sym_name name of symbol as str or bytes, or None if unnamed
+    #  \param sym_section number of section, where symbol is located
+    #  \param sym_offset location of symbol from start of the section
+    #  \param sym_size size of the symbol in bytes
     def append_symbol(self, sym_name, sym_section, sym_offset, sym_size,
             sym_binding=STB.STB_LOCAL, sym_type=STT.STT_NOTYPE,
             sym_visibility=STV.STV_DEFAULT):
-        """Append new symbol to symbol table
-
-        Creates symbol table, if necessary, and adds new symbol name to symbol
-        string table and symbol descriptor to symbol table.
-            sym_name    - name of symbol as str or bytes, or None if unnamed
-            sym_section - number of section, where symbol is located
-            sym_offset  - location of symbol from start of the section
-            sym_size    - size of the symbol in bytes"""
 
         if not isinstance(sym_binding, STB):
             raise Exception('Symbol binding not of type STB, %s given' %
@@ -412,12 +417,14 @@ class ELF:
         try:
             strtab_hdr, strtab = self.get_section_by_name('.strtab')
         except:
+            # TODO: exception driven development
             # strtab not found, create
             self.append_special_section('.strtab')
             strtab_hdr, strtab = self.get_section_by_name('.strtab')
 
         # find .symbtab for storing the symbol structure
         try:
+            # TODO: exception driven development, again
             symtab_hdr, symtab = self.get_section_by_name('.symtab')
         except:
             # symtab not found, create
@@ -457,3 +464,58 @@ class ELF:
 
         # if local update sh_info to symbol id plus one
         symtab_hdr.sh_info = sym_id + 1
+
+
+class ELFTests(unittest.TestCase):
+
+    tv_bytes_l = b' \0\0\0\1\2\3\4\0\0\0\5\x37\x13\0\0'
+
+    tv_bytes_b = b' \0\0\0\4\3\2\1\5\0\0\0\0\0\x13\x37'
+
+    tv_obj_l = [\
+            Elf32_Dyn(DT.DT_ENCODING, 0x04030201, little=True),
+            Elf32_Dyn(DT.DT_STRTAB, 0x1337, little=True)]
+
+    tv_obj_b = [\
+            Elf32_Dyn(DT.DT_ENCODING, 0x04030201),
+            Elf32_Dyn(DT.DT_STRTAB, 0x1337)]
+
+    tv_elf_l = \
+    b'\x7fELF\x01\x01\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00' \
+    + b'\x02\x00\x00\x00\x01\x00\x00\x00\x00\x00\x00\x004\x00\x00\x00T\x00\x00\x00\x00\x00\x00\x004\x00 \x00\x01\x00(\x00\x03\x00\x01\x00'\
+    + b'\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x05\x00\x00\x00\x01\x00\x00\x00'\
+    + b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\xcc\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x01\x00\x00\x00\x03\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\xcc\x00\x00\x00\x14\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x01\x00\x00\x00\x00\x00\x00\x00\x0b\x00\x00\x00\x01\x00\x00\x00\x00\x00\x00\x007\x13\x00\x00\xe0\x00\x00\x00\x10\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x01\x00\x00\x00\x00\x00\x00\x00'\
+    + b'\0' + b'.shstrtab\0' + b'.dynamic\0' + tv_bytes_l
+
+    tv_elf_b = \
+    b'\x7fELF\x01\x02\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00' \
+    + b'\x00\x02\x00\x00\x00\x00\x00\x01\x00\x00\x00\x00\x00\x00\x004\x00\x00\x00T\x00\x00\x00\x00\x004\x00 \x00\x01\x00(\x00\x03\x00\x01\x00'\
+    + b'\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x05\x00\x00\x00\x01\x00\x00\x00'\
+    + b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\xcc\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x01\x00\x00\x00\x03\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\xcc\x00\x00\x00\x14\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x01\x00\x00\x00\x00\x00\x00\x00\x0b\x00\x00\x00\x01\x00\x00\x00\x00\x00\x00\x007\x13\x00\x00\xe0\x00\x00\x00\x10\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x01\x00\x00\x00\x00\x00\x00\x00'\
+    + b'\0' + b'.shstrtab\0' + b'.dynamic\0' + tv_bytes_b
+
+    def test_sections_l(self):
+        tv_bytes = ELFTests.tv_bytes_l
+        tv_elf = ELFTests.tv_elf_l
+
+        invector = ELF(e_data=ELFDATA.ELFDATA2LSB)
+        invector.append_section('.dynamic', tv_bytes, 0x1337)
+
+        expected = tv_elf
+        actual = bytes(invector)
+
+        self.assertEqual(expected, actual)
+
+    @unittest.skip('test vector not ready yet')
+    def test_sections_b(self):
+        tv_bytes = ELFTests.tv_bytes_b
+        tv_elf = ELFTests.tv_elf_b
+
+        invector = ELF(e_data=ELFDATA.ELFDATA2MSB)
+        invector.append_section('.dynamic', tv_bytes, 0x1337)
+
+        expected = tv_elf
+        actual = bytes(invector)
+
+        h,a = invector.get_section_by_name('.dynamic')
+        self.assertEqual(expected, actual)

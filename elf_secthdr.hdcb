@@ -8,7 +8,7 @@ define padding 1 0 8 # array
 
 use magic
 use class class_l
-use endianness
+use endianness endian_l
 use version
 use abi
 use padding 8
@@ -28,12 +28,16 @@ define e_shentsize 2
 define e_shnum 2
 define e_shstrndx 2
 
+legend && echo
+
 let cursor=32
-use e_shoff e_shoff_b
+[ $endian_l ] &&   use e_shoff e_shoff_l
+[ ! $endian_l ] && use e_shoff e_shoff_b
 
 let cursor=46
 use e_shentsize e_shentsize_b
-use e_shnum e_shnum_b
+[ $endian_l ] &&   use e_shnum e_shnum_l && let e_shnum_a=$e_shnum_l
+[ ! $endian_l ] && use e_shnum e_shnum_b && let e_shnum_a=$e_shnum_b
 use e_shstrndx e_shstrndx_b
 
 define sh_name 4
@@ -47,8 +51,9 @@ define sh_info 4
 define sh_addralign 4
 define sh_entsize 4
 
-let cursor=$e_shoff_b
-for i in $(seq 1 $e_shnum_b); do
+[ $endian_l ] &&   let cursor=$e_shoff_l
+[ ! $endian_l ] && let cursor=$e_shoff_b
+for i in $(seq 1 $e_shnum_a); do
   use sh_name
   use sh_type
   use sh_flags
