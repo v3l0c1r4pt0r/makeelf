@@ -144,7 +144,7 @@ class ELF:
                 e_type=e_type, e_machine=e_machine, little=self.little))
 
         # create empty section entry
-        undef_section = Elf32_Shdr()
+        undef_section = Elf32_Shdr(little=self.little)
         self.Elf.Shdr_table.append(undef_section)
         self.Elf.sections.append(b'')
 
