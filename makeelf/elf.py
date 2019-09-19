@@ -517,11 +517,5 @@ class ELFTests(unittest.TestCase):
         expected = tv_elf
         actual = bytes(invector)
 
-        print('sb')
-        print(expected)
-        print(actual)
-        print(invector.Elf.Ehdr)
-        print(invector.Elf.Phdr_table)
         h,a = invector.get_section_by_name('.dynamic')
-        print(h)
         self.assertEqual(expected, actual)
