@@ -272,6 +272,8 @@ class EM(Enum):
     EM_TI_PRU = 144
     EM_AARCH64 = 183
     EM_TILEGX = 191
+    # SM32 (custom OR1K)
+    EM_SM32 = 0x30a
     # The Morph MT.
     EM_MT = 0x2530
     ## #DLX.
