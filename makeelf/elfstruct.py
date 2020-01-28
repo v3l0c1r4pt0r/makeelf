@@ -766,7 +766,7 @@ class Elf32:
     # \param sections List of section contents
     # \param little Endianness of ELF file
     def __init__(self, Ehdr=None, Phdr_table=None, Shdr_table=None,
-            sections=None, little=False):
+            programs=None, sections=None, little=False):
         if Ehdr is None:
             Ehdr = Elf32_Ehdr()
         if Phdr_table is None:
@@ -775,6 +775,8 @@ class Elf32:
             Shdr_table = []
         if sections is None:
             sections = []
+        if programs is None:
+            programs = []
 
         if isinstance(Ehdr, Elf32_Ehdr):
             ## Instance of \link Elf32_Ehdr \endlink
@@ -795,6 +797,14 @@ class Elf32:
             self.Shdr_table = Shdr_table
         else:
             raise Exception('Shdr table must be a list of Elf32_Shdr objects')
+
+        if isinstance(programs, list):
+            ## List of section content
+            #  \details Contains raw bytes objects or any type that can be
+            #  converted using bytes function
+            self.programs = programs
+        else:
+            raise Exception('Programs must be a list containing program content')
 
         if isinstance(sections, list):
             ## List of section content
@@ -847,14 +857,26 @@ class Elf32:
             headers[cursor] = Shdr
             cursor += self.Ehdr.e_shentsize
 
+        # programs
+        for i, Phdr in enumerate(self.Phdr_table):
+            if len(self.programs[i]) != 0 and not isinstance(self.programs[i], memoryview):
+                headers[Phdr.p_offset] = self.programs[i]
+
         # sections
         for i, Shdr in enumerate(self.Shdr_table):
-            if len(self.sections[i]) != 0:
+            if Shdr.sh_offset < 0:
+                pass
+            elif len(self.sections[i]) != 0 and not isinstance(self.sections[i], memoryview):
                 headers[Shdr.sh_offset] = self.sections[i]
 
         # find file size
         end_of_file = sorted(headers.keys())[-1]
         end_of_file += len(headers[end_of_file])
+
+        # Set all invalid offsets to end of file
+        for i, Shdr in enumerate(self.Shdr_table):
+            if Shdr.sh_offset < 0:
+                Shdr.sh_offset = end_of_file
 
         # create and populate buffer
         b = bytes(end_of_file)
@@ -877,6 +899,18 @@ class Elf32:
             # xor into b
             b = makeelf.utils.bytes_xor(b, aligned)
         return b
+
+    def create_section_from_hdr(blob, programs, phdrs, hdr):
+        first = hdr.sh_offset
+        last = first + hdr.sh_size
+        program, idx = next(((p, idx) for idx, p in enumerate(phdrs) if p.p_offset <= first and last <= (p.p_offset + p.p_filesz)), (None, None))
+        if program != None and hdr.sh_size > 0:
+            section = memoryview(programs[idx])[first - program.p_offset:last - program.p_offset]
+        elif blob and last <= len(blob):
+            section = bytearray(blob[first:last])
+        else:
+            section = bytearray([0x00 for i in range(hdr.sh_size)])
+        return section
 
     ##
     # \brief Deserialization of object
@@ -905,16 +939,67 @@ class Elf32:
             Shdr, b = Elf32_Shdr.from_bytes(b, little)
             Shdr_a.append(Shdr)
 
+        # Programs
+        programs = []
+        Phdr_f = []
+        Phdr_a = sorted(Phdr_a, key=lambda p: -p.p_filesz)
+        for Phdr in Phdr_a:
+            first = Phdr.p_offset
+            last = first + Phdr.p_filesz
+            program, idx = next(((p, idx) for idx, p in enumerate(Phdr_f) if p.p_offset <= first and last <= (p.p_offset + p.p_filesz)), (None, None))
+            if not program or Phdr.p_filesz == 0:
+                program = bytearray(blob[first:last])
+            else:
+                program = memoryview(programs[idx])[first - program.p_offset:last - program.p_offset]
+            programs.append(program)
+            Phdr_f.append(Phdr)
+
         # Sections
         sections = []
         # TODO: support of section content handlers, i.e. _Strtab, _Symtab
-        for i, Shdr in enumerate(Shdr_a):
-            first = Shdr.sh_offset
-            last = first + Shdr.sh_size
-            section = blob[first:last]
+        for Shdr in Shdr_a:
+            section = Elf32.create_section_from_hdr(blob, programs, Phdr_a, Shdr)
             sections.append(section)
 
-        return Elf32(Ehdr, Phdr_a, Shdr_a, sections, little=Ehdr.little), None
+        return Elf32(Ehdr, Phdr_a, Shdr_a, programs, sections, little=Ehdr.little), None
+
+    def extend_program(self, idx, extension):
+        program = self.programs[idx]
+        Phdr = self.Phdr_table[idx]
+        to_update = []
+        for i, Shdr in enumerate(self.Shdr_table):
+            section = self.sections[i]
+            if not isinstance(section, memoryview):
+                continue
+            if not section.obj is program:
+                continue
+            to_update.append((i, Shdr))
+            section.release()
+        self.programs[idx].extend(extension)
+        program = self.programs[idx]
+        Phdr.p_filesz = len(program)
+        for i, Shdr in to_update:
+            first = Shdr.sh_offset - Phdr.p_offset
+            last = first + Shdr.sh_size
+            self.sections[i] = memoryview(program)[first:last]
+        return program
+
+    def resize_section(self, section, size):
+        idx, Shdr = next(((idx, p) for idx, p in enumerate(self.Shdr_table) if self.sections[idx] is section))
+        if len(section) == 0:
+            Shdr.sh_size = size
+            self.sections[idx] = Elf32.create_section_from_hdr(None, self.programs, self.Phdr_table, Shdr)
+            return
+        if not isinstance(section, memoryview):
+            if len(section) > size:
+                self.sections[idx] = section[:size]
+            else:
+                self.sections[idx].extend([0xFF for i in range(size - len(section))])
+            return
+        pidx, Phdr = next(((i, p) for i, p in enumerate(self.Phdr_table) if self.programs[i] is section.obj))
+        first = Shdr.sh_offset - Phdr.p_offset
+        last = first + size
+        self.sections[idx] = memoryview(self.programs[pidx])[first:last]
 
     ##
     # \brief Length of object
