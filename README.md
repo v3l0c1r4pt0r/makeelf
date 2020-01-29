@@ -46,6 +46,22 @@ print(elf)
 
 ### Parsing ELF file
 
+Either using helper function:
+
+```Python
+elf = ELF.from_file('some.elf')
+print(elf)
+```
+
+Then if you'd like to have full control on headers, low-level object can be
+extracted:
+
+```Python
+elf = elf.Elf
+```
+
+Or create low-level object manually:
+
 ```Python
 fd = os.open('some.elf', os.O_RDONLY)
 b = os.read(fd, 0xffff)
