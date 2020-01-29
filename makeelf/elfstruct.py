@@ -782,14 +782,14 @@ class Elf32:
         else:
             self.Ehdr = Ehdr.from_bytes(Ehdr)
 
-        if isinstance(Phdr_table, list) and (len(Phdr_table) is 0) or (
+        if isinstance(Phdr_table, list) and (len(Phdr_table) == 0) or (
                 isinstance(Phdr_table[0], Elf32_Phdr)):
             ## List of instances of \link Elf32_Phdr \endlink
             self.Phdr_table = Phdr_table
         else:
             raise Exception('Phdr table must be a list of Elf32_Phdr objects')
 
-        if isinstance(Shdr_table, list) and (len(Shdr_table) is 0) or (
+        if isinstance(Shdr_table, list) and (len(Shdr_table) == 0) or (
                 isinstance(Shdr_table[0], Elf32_Shdr)):
             ## List of instances of \link Elf32_Shdr \endlink
             self.Shdr_table = Shdr_table
