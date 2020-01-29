@@ -192,7 +192,7 @@ class Elf32_e_identTests(unittest.TestCase):
             expected = tv_str
             actual = str(invector)
 
-            self.assertEqual(expected, actual)
+            self.assertEqual(expected, actual, 'error at element {}'.format(i))
 
     def test_repr(self):
         for i in range(len(Elf32_e_identTests.tv_obj)):
@@ -203,7 +203,7 @@ class Elf32_e_identTests(unittest.TestCase):
             expected = tv_repr
             actual = repr(invector)
 
-            self.assertEqual(expected, actual)
+            self.assertEqual(expected, actual, 'error at element {}'.format(i))
 
     def test_len(self):
         for i in range(len(Elf32_e_identTests.tv_obj)):
@@ -213,7 +213,7 @@ class Elf32_e_identTests(unittest.TestCase):
             expected = 16
             actual = len(invector)
 
-            self.assertEqual(expected, actual)
+            self.assertEqual(expected, actual, 'error at element {}'.format(i))
 
     def test_bytes(self):
         for i in range(len(Elf32_e_identTests.tv_bytes)):
@@ -224,7 +224,7 @@ class Elf32_e_identTests(unittest.TestCase):
             expected = tv_bytes
             actual = bytes(invector)
 
-            self.assertEqual(expected, actual)
+            self.assertEqual(expected, actual, 'error at element {}'.format(i))
 
     @unittest.skip('Comparison not implemented')
     def test_from_bytes(self):

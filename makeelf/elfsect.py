@@ -145,7 +145,7 @@ class Elf32_DynTests(unittest.TestCase):
             expected = '{d_tag=DT.DT_ENCODING, d_val=67305985, d_ptr=None}'
             actual = str(invector)
 
-            self.assertEqual(expected, actual)
+            self.assertEqual(expected, actual, 'error at element {}'.format(i))
 
     def test_repr(self):
         for i in range(len(Elf32_DynTests.tv_bytes)):
@@ -156,7 +156,7 @@ class Elf32_DynTests(unittest.TestCase):
             expected = 'Elf32_Dyn(DT.DT_ENCODING, 67305985, None)'
             actual = repr(invector)
 
-            self.assertEqual(expected, actual)
+            self.assertEqual(expected, actual, 'error at element {}'.format(i))
 
     def test_len(self):
         for i in range(len(Elf32_DynTests.tv_bytes)):
@@ -167,7 +167,7 @@ class Elf32_DynTests(unittest.TestCase):
             expected = 8
             actual = len(invector)
 
-            self.assertEqual(expected, actual)
+            self.assertEqual(expected, actual, 'error at element {}'.format(i))
 
     def test_bytes(self):
         for i in range(len(Elf32_DynTests.tv_bytes)):
@@ -178,7 +178,7 @@ class Elf32_DynTests(unittest.TestCase):
             expected = tv_bytes
             actual = bytes(invector)
 
-            self.assertEqual(expected, actual)
+            self.assertEqual(expected, actual, 'error at element {}'.format(i))
 
     @unittest.skip('d_val and d_ptr should be selectively hidden - it is not')
     def test_from_bytes(self):
@@ -191,7 +191,7 @@ class Elf32_DynTests(unittest.TestCase):
         expected = tv_obj, b'\x13\x37'
         actual = Elf32_Dyn.from_bytes(invector, tv_endianness)
 
-        self.assertEqual(expected, actual)
+        self.assertEqual(expected, actual, 'error at element {}'.format(i))
 
 
 ## \class STB
@@ -330,7 +330,7 @@ class Elf32_SymTests(unittest.TestCase):
             # st_other=STV.STV_PROTECTED
             actual = str(invector)
 
-            self.assertEqual(expected, actual)
+            self.assertEqual(expected, actual, 'error at element {}'.format(i))
 
     def test_repr(self):
         for i in range(len(Elf32_SymTests.tv_bytes)):
@@ -343,7 +343,7 @@ class Elf32_SymTests(unittest.TestCase):
             # TODO: st_other shoudl be STV.STV_PROTECTED
             actual = repr(invector)
 
-            self.assertEqual(expected, actual)
+            self.assertEqual(expected, actual, 'error at element {}'.format(i))
 
     def test_len(self):
         for i in range(len(Elf32_SymTests.tv_bytes)):
@@ -354,7 +354,7 @@ class Elf32_SymTests(unittest.TestCase):
             expected = 16
             actual = len(invector)
 
-            self.assertEqual(expected, actual)
+            self.assertEqual(expected, actual, 'error at element {}'.format(i))
 
     def test_bytes(self):
         for i in range(len(Elf32_SymTests.tv_bytes)):
@@ -365,7 +365,7 @@ class Elf32_SymTests(unittest.TestCase):
             expected = tv_bytes
             actual = bytes(invector)
 
-            self.assertEqual(expected, actual)
+            self.assertEqual(expected, actual, 'error at element {}'.format(i))
 
     def test_from_bytes(self):
         for i in range(len(Elf32_SymTests.tv_bytes)):
