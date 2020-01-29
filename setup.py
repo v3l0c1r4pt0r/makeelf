@@ -4,7 +4,7 @@ from distutils.core import setup
 setup(
         name = 'makeelf',
         packages = ['makeelf', 'makeelf.type'],
-        version = '0.3.2',
+        version = '0.3.3',
         description = 'ELF reader-writer library',
         url = 'https://github.com/v3l0c1r4pt0r/makeelf',
         author = 'v3l0c1r4pt0r',
