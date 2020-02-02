@@ -247,12 +247,12 @@ class ELF:
         shstrtab = self.Elf.sections[shstrtab_idx]
 
         # shortcut if looking for .shstrtab
-        if sec_name is '.shstrtab':
+        if sec_name == '.shstrtab':
             return (shstrtab_hdr, shstrtab)
 
         # find string in .shstrtab
         name_off = shstrtab.find(sec_name)
-        if name_off is -1:
+        if name_off == -1:
             raise Exception('Section "%s" not in ELF' % \
                     sec_name.decode('utf-8'))
 
