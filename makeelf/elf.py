@@ -465,6 +465,9 @@ class ELF:
         # if local update sh_info to symbol id plus one
         symtab_hdr.sh_info = sym_id + 1
 
+        # return index of new symbol
+        return sym_id
+
 
 class ELFTests(unittest.TestCase):
 
