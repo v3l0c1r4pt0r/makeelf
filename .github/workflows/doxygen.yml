@@ -35,6 +35,8 @@ jobs:
         DOXYGEN_PASS: ${{ secrets.DOXYGEN_PASS }}
       run: |
         set -e
+        pwd
+        ls -al
         cd doc/html
         cat <<EOF >$GITHUB_WORKSPACE/makeelf.netrc
         machine static.re-ws.pl login ${DOXYGEN_USER} password ${DOXYGEN_PASS}
