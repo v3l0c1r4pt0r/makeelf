@@ -3,9 +3,7 @@ name: Build Doxygen
 on:
 # for now, make it manual ??
   push:
-    branches: [ master ]
-#  pull_request:
-#    branches: [ master ]
+    branches: [ master devel ]
 
 jobs:
   doxygen:
@@ -41,8 +39,8 @@ jobs:
         user ${DOXYGEN_USER} ${DOXYGEN_PASS}
         passive
         verbose
-        mkdir ${GITHUB_REF##*/}-test
-        cd ${GITHUB_REF##*/}-test
+        mkdir ${GITHUB_REF##*/}
+        cd ${GITHUB_REF##*/}
         mput *
         mkdir search
         mput search/*
