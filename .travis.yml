@@ -9,5 +9,5 @@ script:
 # - python3 makeelf/elfstruct.py
 # - python3 makeelf/elfsect.py
   - python3 -m unittest makeelf.elf
-  - python3 -m unittest makeelf.elfsect
+  - python3 -m unittest makeelf.test_elfsect
   - python3 -m unittest makeelf.test_elfstruct
