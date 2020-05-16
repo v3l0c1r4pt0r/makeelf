@@ -3,7 +3,7 @@ name: Build Doxygen
 on:
 # for now, make it manual ??
   push:
-    branches: [  ]
+    branches: [ master ]
 #  pull_request:
 #    branches: [ master ]
 
