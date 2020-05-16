@@ -28,3 +28,19 @@ jobs:
       with:
         name: makeelf-doxygen
         path: doc/html
+        
+    - name: Upload to webserver
+      env:
+        DOXYGEN_USER: ${{ secrets.DOXYGEN_USER }}
+        DOXYGEN_PASS: ${{ secrets.DOXYGEN_PASS }}
+      run: |
+        set -e
+        cd doc/html
+        cat >.netrc <<EOF
+        machine static.re-ws.pl login ${DOXYGEN_USER} password ${DOXYGEN_PASS}
+        EOF
+        ftp -i -N .netrc static.re-ws.pl <<EOF
+        mkdir ${GITHUB_REF##*/}
+        cd ${GITHUB_REF##*/}
+        mput *
+        quit
