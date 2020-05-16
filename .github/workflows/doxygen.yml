@@ -39,8 +39,10 @@ jobs:
         ls -la
         ftp -i -n static.re-ws.pl <<EOF
         user ${DOXYGEN_USER} ${DOXYGEN_PASS}
-        mkdir ${GITHUB_REF##*/}
-        cd ${GITHUB_REF##*/}
-        #mput *
+        passive
+        verbose
+        mkdir ${GITHUB_REF##*/}-test
+        cd ${GITHUB_REF##*/}-test
+        mput *
         quit
         EOF
