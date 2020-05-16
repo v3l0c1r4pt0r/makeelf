@@ -3,7 +3,11 @@ name: Build Doxygen
 on:
 # for now, make it manual ??
   push:
-    branches: [ master devel ]
+    branches:
+      - master
+      - devel
+    tags:
+      - '*'
 
 jobs:
   doxygen:
