@@ -397,6 +397,7 @@ class ELF:
     #  \param sym_section number of section, where symbol is located
     #  \param sym_offset location of symbol from start of the section
     #  \param sym_size size of the symbol in bytes
+    #  \returns index of symbol in table
     def append_symbol(self, sym_name, sym_section, sym_offset, sym_size,
             sym_binding=STB.STB_LOCAL, sym_type=STT.STT_NOTYPE,
             sym_visibility=STV.STV_DEFAULT):
@@ -464,6 +465,9 @@ class ELF:
 
         # if local update sh_info to symbol id plus one
         symtab_hdr.sh_info = sym_id + 1
+
+        # return index of new symbol
+        return sym_id
 
 
 class ELFTests(unittest.TestCase):
