@@ -36,15 +36,10 @@ jobs:
       run: |
         set -e
         cd doc/html
-        cat <<EOF >../../makeelf.netrc
-        machine static.re-ws.pl login ${DOXYGEN_USER} password ${DOXYGEN_PASS}
-        EOF
-        chmod 600 ../../makeelf.netrc
-        ftp -h
-        ftp -i -N ../../makeelf.netrc static.re-ws.pl <<EOF
+        ftp -i -n static.re-ws.pl <<EOF
+        user ${DOXYGEN_USER} ${DOXYGEN_PASS}
         mkdir ${GITHUB_REF##*/}
         cd ${GITHUB_REF##*/}
         mput *
         quit
         EOF
-        rm ../../makeelf.netrc
