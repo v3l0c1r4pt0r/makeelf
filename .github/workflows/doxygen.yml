@@ -35,17 +35,15 @@ jobs:
         DOXYGEN_PASS: ${{ secrets.DOXYGEN_PASS }}
       run: |
         set -e
-        pwd
-        ls -al
         cd doc/html
-        cat <<EOF >$GITHUB_WORKSPACE/makeelf.netrc
+        cat <<EOF >../../makeelf.netrc
         machine static.re-ws.pl login ${DOXYGEN_USER} password ${DOXYGEN_PASS}
         EOF
-        chmod 600 $GITHUB_WORKSPACE/makeelf.netrc
-        ftp -i -N $GITHUB_WORKSPACE/makeelf.netrc static.re-ws.pl <<EOF
+        chmod 600 ../../makeelf.netrc
+        ftp -i -N ../../makeelf.netrc static.re-ws.pl <<EOF
         mkdir ${GITHUB_REF##*/}
         cd ${GITHUB_REF##*/}
         mput *
         quit
         EOF
-        rm $GITHUB_WORKSPACE/makeelf.netrc
+        rm ../../makeelf.netrc
