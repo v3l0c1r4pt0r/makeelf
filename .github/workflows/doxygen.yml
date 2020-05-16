@@ -1,0 +1,24 @@
+name: Build Doxygen
+
+on:
+# for now, make it manual ??
+  push:
+    branches: [  ]
+#  pull_request:
+#    branches: [ master ]
+
+jobs:
+  doxygen:
+    runs-on: ubuntu-latest
+
+    steps:
+    # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+    - uses: actions/checkout@v2
+
+    - name: Doxygen Action
+      uses: mattnotmitt/doxygen-action@v1.1.0
+      with:
+        # Path to Doxyfile
+        doxyfile-path: $GITHUB_WORKSPACE/Doxyfile
+        # Working directory
+        working-directory: $GITHUB_WORKSPACE
