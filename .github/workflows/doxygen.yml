@@ -36,10 +36,11 @@ jobs:
       run: |
         set -e
         cd doc/html
-        cat >.netrc <<EOF
+        cat <<EOF >makeelf.netrc
         machine static.re-ws.pl login ${DOXYGEN_USER} password ${DOXYGEN_PASS}
         EOF
-        ftp -i -N .netrc static.re-ws.pl <<EOF
+        chmod 600 makeelf.netrc
+        ftp -i -N makeelf.netrc static.re-ws.pl <<EOF
         mkdir ${GITHUB_REF##*/}
         cd ${GITHUB_REF##*/}
         mput *
