@@ -22,3 +22,9 @@ jobs:
         doxyfile-path: ./Doxyfile
         # Working directory
         working-directory: .
+
+    - name: Archive Doxygen pages
+      uses: actions/upload-artifact@v1
+      with:
+        name: makeelf-doxygen
+        path: doc/html
