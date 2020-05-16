@@ -44,6 +44,7 @@ jobs:
         mkdir ${GITHUB_REF##*/}-test
         cd ${GITHUB_REF##*/}-test
         mput *
+        mkdir search
         mput search/*
         quit
         EOF
