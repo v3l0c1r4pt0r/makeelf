@@ -1,10 +1,15 @@
 #!/usr/bin/env python3
 from distutils.core import setup
+import subprocess
+
+def version():
+    git_proc = subprocess.Popen(['git', 'describe', '--always', '--dirty', '--tag'], stdout=subprocess.PIPE)
+    return git_proc.stdout.readlines()[0].decode('utf-8').strip()
 
 setup(
         name = 'makeelf',
         packages = ['makeelf', 'makeelf.type'],
-        version = '0.3.3',
+        version = version(),
         description = 'ELF reader-writer library',
         url = 'https://github.com/v3l0c1r4pt0r/makeelf',
         author = 'v3l0c1r4pt0r',
