@@ -58,7 +58,10 @@ def main():
                     t_obj(c_obj())
                     result = '+'
             except Exception as e:
-                result = '-'
+                if isinstance(e, unittest.case.SkipTest):
+                    result = 's'
+                else:
+                    result = '-'
             print('{t:<{n}} | '.format(t=result, n=len(t)), end='')
         print()
     pass
