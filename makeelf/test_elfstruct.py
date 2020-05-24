@@ -80,7 +80,6 @@ class Elf32_e_identTests(unittest.TestCase):
 
             self.assertEqual(expected, actual, 'error at element {}'.format(i))
 
-    @unittest.skip('Comparison not implemented')
     def test_from_bytes(self):
         for i in range(len(Elf32_e_identTests.tv_bytes)):
             tv_bytes = Elf32_e_identTests.tv_bytes[i]

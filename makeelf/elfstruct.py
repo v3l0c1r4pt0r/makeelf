@@ -127,6 +127,15 @@ class Elf32_e_ident:
                 self.EI_CLASS, self.EI_DATA, self.EI_VERSION,
                 self.EI_OSABI)
 
+    def __eq__(self, rhs):
+        # NOTE: little is ignored, is it wrong?
+        return type(self) == type(rhs) and \
+                self.EI_MAG == rhs.EI_MAG and \
+                self.EI_CLASS == rhs.EI_CLASS and \
+                self.EI_DATA == rhs.EI_DATA and \
+                self.EI_VERSION == rhs.EI_VERSION and \
+                self.EI_OSABI == rhs.EI_OSABI
+
     def __bytes__(self):
         packet = self.EI_MAG + bytes(self.EI_CLASS) + bytes(self.EI_DATA) + \
                 bytes(self.EI_VERSION) + bytes(self.EI_OSABI)
