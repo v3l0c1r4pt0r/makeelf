@@ -452,11 +452,11 @@ class Elf32_Ehdr:
                 bytes(e_shnum) + bytes(e_shstrndx)
         return b
 
-    def from_bytes(b):
+    def from_bytes(b, little=False):
         e_ident, b = Elf32_e_ident.from_bytes(b)
         # througout this function we rely only on ELF header regarding
         # endianness
-        little = e_ident.EI_DATA is ELFDATA.ELFDATA2LSB
+        #little = e_ident.EI_DATA is ELFDATA.ELFDATA2LSB
         e_type, b = ET.from_bytes(b, little=little)
         e_machine, b = EM.from_bytes(b, little=little)
         # TODO: use Elf*_Word or similar to be able to create second header -

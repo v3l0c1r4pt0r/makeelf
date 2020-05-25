@@ -182,16 +182,15 @@ class Elf32_EhdrTests(unittest.TestCase):
 
             self.assertEqual(expected, actual, 'error at element {}'.format(i))
 
-    @unittest.skip('Comparison not implemented')
     def test_from_bytes(self):
         for i in range(len(Elf32_EhdrTests.tv_bytes)):
             tv_bytes = Elf32_EhdrTests.tv_bytes[i]
             tv_obj = Elf32_EhdrTests.tv_obj[i]
-            #tv_endianness = Elf32_EhdrTests.tv_endianness[i]
+            tv_endianness = Elf32_EhdrTests.tv_endianness[i]
 
             invector = tv_bytes + b'\x13\x37'
             expected = tv_obj, b'\x13\x37'
-            actual = Elf32_e_ident.from_bytes(invector)
+            actual = Elf32_Ehdr.from_bytes(invector, tv_endianness)
 
             #self.assertEqual(expected[0].little, actual[0].little, i)
             self.assertEqual(expected, actual, 'error at element {}'.format(i))
