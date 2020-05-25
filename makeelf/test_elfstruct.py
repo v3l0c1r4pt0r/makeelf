@@ -121,6 +121,25 @@ class Elf32_EhdrTests(unittest.TestCase):
                 e_type=ET.ET_EXEC, e_machine=EM.EM_386, e_version=2, e_entry=1, e_phoff=2, e_shoff=3, e_flags=0, e_ehsize=52, e_phentsize=4, e_phnum=5, e_shentsize=6, e_shnum=7, e_shstrndx=8, little=True)
             ]
 
+    tv_repr = [
+            'Elf32_Ehdr(Elf32_e_ident(b\'\\x7fELF\', ELFCLASS.ELFCLASS32, ELFDATA.ELFDATA2MSB, EV.EV_CURRENT, ELFOSABI.ELFOSABI_NONE), ET.ET_REL, EM.EM_NONE, 1, 0, 0, 0, 0, 52, 0, 0, 0, 0, 0)',
+            'Elf32_Ehdr(Elf32_e_ident(b\'\\x7fELF\', ELFCLASS.ELFCLASS32, ELFDATA.ELFDATA2MSB, EV.EV_CURRENT, ELFOSABI.ELFOSABI_NONE), ET.ET_REL, EM.EM_NONE, 1, 0, 0, 0, 0, 52, 0, 0, 0, 0, 0)',
+            'Elf32_Ehdr(Elf32_e_ident(b\'\\x7fELF\', ELFCLASS.ELFCLASS32, ELFDATA.ELFDATA2LSB, EV.EV_CURRENT, ELFOSABI.ELFOSABI_NONE), ET.ET_NONE, EM.EM_NONE, 1, 0, 0, 0, 0, 52, 0, 0, 0, 0, 0)',
+            'Elf32_Ehdr(Elf32_e_ident(b\'\\x7fELF\', ELFCLASS.ELFCLASS32, ELFDATA.ELFDATA2MSB, EV.EV_CURRENT, ELFOSABI.ELFOSABI_NONE), ET.ET_NONE, EM.EM_NONE, 1, 0, 0, 0, 0, 52, 0, 0, 0, 0, 0)',
+            'Elf32_Ehdr(Elf32_e_ident(b\'\\x7fELF\', ELFCLASS.ELFCLASSNONE, ELFDATA.ELFDATA2LSB, EV.EV_NONE, ELFOSABI.ELFOSABI_HPUX), ET.ET_EXEC, EM.EM_386, 2, 1, 2, 3, 0, 52, 4, 5, 6, 7, 8)',
+            ]
+
+    def test_repr(self):
+        for i in range(len(Elf32_EhdrTests.tv_obj)):
+            tv_obj = Elf32_EhdrTests.tv_obj[i]
+            tv_repr = Elf32_EhdrTests.tv_repr[i]
+
+            invector = tv_obj
+            expected = tv_repr
+            actual = repr(invector)
+
+            self.assertEqual(expected, actual, 'error at element {}'.format(i))
+
     def test_len(self):
         for i in range(len(Elf32_EhdrTests.tv_obj)):
             tv_obj = Elf32_EhdrTests.tv_obj[i]
