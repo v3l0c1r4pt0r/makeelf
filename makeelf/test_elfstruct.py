@@ -96,6 +96,8 @@ class Elf32_e_identTests(unittest.TestCase):
 
 class Elf32_EhdrTests(unittest.TestCase):
 
+    tv_endianness = [True, False, True, False, True]
+
     tv_bytes = [
             b'\x7fELF\1\2\1\0\0\0\0\0\0\0\0\0' + b'\1\0\0\0\1\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\x34\0\0\0\0\0\0\0\0\0\0\0',
             b'\x7fELF\1\2\1\0\0\0\0\0\0\0\0\0' + b'\0\1\0\0\0\0\0\1\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\x34\0\0\0\0\0\0\0\0\0\0',
@@ -178,4 +180,18 @@ class Elf32_EhdrTests(unittest.TestCase):
             expected = tv_bytes
             actual = bytes(invector)
 
+            self.assertEqual(expected, actual, 'error at element {}'.format(i))
+
+    @unittest.skip('Comparison not implemented')
+    def test_from_bytes(self):
+        for i in range(len(Elf32_EhdrTests.tv_bytes)):
+            tv_bytes = Elf32_EhdrTests.tv_bytes[i]
+            tv_obj = Elf32_EhdrTests.tv_obj[i]
+            #tv_endianness = Elf32_EhdrTests.tv_endianness[i]
+
+            invector = tv_bytes + b'\x13\x37'
+            expected = tv_obj, b'\x13\x37'
+            actual = Elf32_e_ident.from_bytes(invector)
+
+            #self.assertEqual(expected[0].little, actual[0].little, i)
             self.assertEqual(expected, actual, 'error at element {}'.format(i))
