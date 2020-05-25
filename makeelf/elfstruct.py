@@ -409,6 +409,24 @@ class Elf32_Ehdr:
             self.e_flags, self.e_ehsize, self.e_phentsize, self.e_phnum,
             self.e_shentsize, self.e_shnum, self.e_shstrndx)
 
+    def __eq__(self, rhs):
+        # NOTE: little is ignored, is it wrong?
+        return type(self) == type(rhs) and \
+                self.e_ident == rhs.e_ident and \
+                self.e_type == rhs.e_type and \
+                self.e_machine == rhs.e_machine and \
+                self.e_version == rhs.e_version and \
+                self.e_entry == rhs.e_entry and \
+                self.e_phoff == rhs.e_phoff and \
+                self.e_shoff == rhs.e_shoff and \
+                self.e_flags == rhs.e_flags and \
+                self.e_ehsize == rhs.e_ehsize and \
+                self.e_phentsize == rhs.e_phentsize and \
+                self.e_phnum == rhs.e_phnum and \
+                self.e_shentsize == rhs.e_shentsize and \
+                self.e_shnum == rhs.e_shnum and \
+                self.e_shstrndx == rhs.e_shstrndx
+
     def __bytes__(self):
         little = self.little
         e_type = bytes(self.e_type)
