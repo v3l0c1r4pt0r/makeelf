@@ -640,6 +640,7 @@ class SHT(Enum):
     SHT_HIPROC = 0x7fffffff
     SHT_LOUSER = 0x80000000
     SHT_HIUSER = 0xffffffff
+    SHT_RENESAS_INFO = 0xa0000000
 
 
 ## \class SHN
