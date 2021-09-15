@@ -544,7 +544,7 @@ class PF(Enum):
 class Elf32_Phdr:
 
     def __init__(self, p_type=0, p_offset=0, p_vaddr=0, p_paddr=0, p_filesz=0,
-            p_memsz=0, p_flags=0, p_align=0, little=False):
+                 p_memsz=0, p_flags=0, p_align=0, little=False, sections=None):
         ## Type of segment
         self.p_type = p_type
         ## Offset in file, where first byte of segment resides
@@ -567,6 +567,10 @@ class Elf32_Phdr:
         #  \details Is true, if header values are meant to be stored as
         #  little-endian or false otherwise
         self.little = little
+
+        ## Sections linked to this segment
+        #  \details List of Section IDs contained within this segment
+        self.sections = sections or []
 
     def __str__(self):
         return '{p_type=%s, p_offset=%s, p_vaddr=%s, p_paddr=%s, ' \
