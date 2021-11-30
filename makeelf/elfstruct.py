@@ -7,6 +7,7 @@ from makeelf.type.uint8 import uint8
 from makeelf.type.uint16 import uint16
 from makeelf.type.uint32 import uint32
 import makeelf.utils
+from io import BytesIO
 
 ## \class ELFCLASS
 #  \brief File class
@@ -884,8 +885,17 @@ class Elf32:
         end_of_file = sorted(headers.keys())[-1]
         end_of_file += len(headers[end_of_file])
 
+        b = BytesIO(bytes(end_of_file))
+
+        regions = list()
+
+        # check if two half segments [x1, x2) and [y1; y2) intersect
+        def segments_intersect(x, y):
+            x1, x2 = x
+            y1, y2 = y
+            return x2 > y1 and y2 > x1
+
         # create and populate buffer
-        b = bytes(end_of_file)
         for off in headers:
             # TODO: there's something wrong, when hdr is not bytes, but only
             # simulates it
@@ -899,12 +909,20 @@ class Elf32:
                 hdr = bytes(hdr)
             size = len(hdr)
 
+            region = (off, off + size)
+            if any(segments_intersect(x, region) for x in regions):
+                raise Exception('Attempt to write at intersecting parts of a file')
+            regions.append(region)
+
+            b.seek(off)
+            b.write(hdr)
+
             # expand to file size
-            aligned = align(bytes(off) + hdr, end_of_file)
+            #aligned = align(bytes(off) + hdr, end_of_file)
 
             # xor into b
-            b = makeelf.utils.bytes_xor(b, aligned)
-        return b
+            #b = makeelf.utils.bytes_xor(b, aligned)
+        return b.getvalue()
 
     ##
     # \brief Deserialization of object
