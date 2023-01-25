@@ -186,26 +186,40 @@ class EM(Enum):
     EM_MIPS = 8
     EM_S370 = 9
     EM_MIPS_RS3_LE = 10
-    ## 11 was the old Sparc V9 ABI.
-    EM_OLD_SPARC_V9 = 11
-    ## 12 through 14 are reserved.
+    EM_OLD_SPARCV9 = 11
+    EM_res011 = 11
+    EM_res012 = 12
+    EM_res013 = 13
+    EM_res014 = 14
     EM_PARISC = 15
-    # 16 is reserved.
-    ## Some old PowerPC object files use 17.
+    EM_res016 = 16
     EM_PPC_OLD = 17
-    EM_VPP500 = 17
+    EM_VPP550 = 17
     EM_SPARC32PLUS = 18
     EM_960 = 19
     EM_PPC = 20
     EM_PPC64 = 21
     EM_S390 = 22
-    # 23 through 35 are served.
+    EM_SPU = 23
+    EM_res024 = 24
+    EM_res025 = 25
+    EM_res026 = 26
+    EM_res027 = 27
+    EM_res028 = 28
+    EM_res029 = 29
+    EM_res030 = 30
+    EM_res031 = 31
+    EM_res032 = 32
+    EM_res033 = 33
+    EM_res034 = 34
+    EM_res035 = 35
     EM_V800 = 36
     EM_FR20 = 37
     EM_RH32 = 38
+    EM_MCORE = 39
     EM_RCE = 39
     EM_ARM = 40
-    EM_ALPHA = 41
+    EM_OLD_ALPHA = 41
     EM_SH = 42
     EM_SPARCV9 = 43
     EM_TRICORE = 44
@@ -257,13 +271,14 @@ class EM(Enum):
     EM_MN10200 = 90
     EM_PJ = 91
     EM_OR1K = 92
-    EM_ARC_A5 = 93
+    EM_ARC_COMPACT = 93
     EM_XTENSA = 94
+    EM_SCORE_OLD = 95
     EM_VIDEOCORE = 95
     EM_TMM_GPP = 96
     EM_NS32K = 97
     EM_TPC = 98
-    ## Some old picoJava object files use 99 (EM_PJ is correct).
+    EM_PJ_OLD = 99
     EM_SNP1K = 99
     EM_ST200 = 100
     EM_IP2K = 101
@@ -276,58 +291,173 @@ class EM(Enum):
     EM_SEP = 108
     EM_ARCA = 109
     EM_UNICORE = 110
+    EM_EXCESS = 111
+    EM_DXP = 112
     EM_ALTERA_NIOS2 = 113
     EM_CRX = 114
+    EM_CR16_OLD = 115
+    EM_XGATE = 115
+    EM_C166 = 116
+    EM_M16C = 117
+    EM_DSPIC30F = 118
+    EM_CE = 119
+    EM_M32C = 120
+    EM_res121 = 121
+    EM_res122 = 122
+    EM_res123 = 123
+    EM_res124 = 124
+    EM_res125 = 125
+    EM_res126 = 126
+    EM_res127 = 127
+    EM_res128 = 128
+    EM_res129 = 129
+    EM_res130 = 130
+    EM_TSK3000 = 131
+    EM_RS08 = 132
+    EM_res133 = 133
+    EM_ECOG2 = 134
+    EM_SCORE = 135
+    EM_SCORE7 = 135
+    EM_DSP24 = 136
+    EM_VIDEOCORE3 = 137
+    EM_LATTICEMICO32 = 138
+    EM_SE_C17 = 139
+    EM_TI_C6000 = 140
+    EM_TI_C2000 = 141
+    EM_TI_C5500 = 142
+    EM_res143 = 143
     EM_TI_PRU = 144
+    EM_res145 = 145
+    EM_res146 = 146
+    EM_res147 = 147
+    EM_res148 = 148
+    EM_res149 = 149
+    EM_res150 = 150
+    EM_res151 = 151
+    EM_res152 = 152
+    EM_res153 = 153
+    EM_res154 = 154
+    EM_res155 = 155
+    EM_res156 = 156
+    EM_res157 = 157
+    EM_res158 = 158
+    EM_res159 = 159
+    EM_MMDSP_PLUS = 160
+    EM_CYPRESS_M8C = 161
+    EM_R32C = 162
+    EM_TRIMEDIA = 163
+    EM_QDSP6 = 164
+    EM_8051 = 165
+    EM_STXP7X = 166
+    EM_NDS32 = 167
+    EM_ECOG1 = 168
+    EM_ECOG1X = 168
+    EM_MAXQ30 = 169
+    EM_XIMO16 = 170
+    EM_MANIK = 171
+    EM_CRAYNV2 = 172
+    EM_RX = 173
+    EM_METAG = 174
+    EM_MCST_ELBRUS = 175
+    EM_ECOG16 = 176
+    EM_CR16 = 177
+    EM_ETPU = 178
+    EM_SLE9X = 179
+    EM_L1OM = 180
+    EM_K1OM = 181
+    EM_INTEL182 = 182
     EM_AARCH64 = 183
+    EM_ARM184 = 184
+    EM_AVR32 = 185
+    EM_STM8 = 186
+    EM_TILE64 = 187
+    EM_TILEPRO = 188
+    EM_MICROBLAZE = 189
+    EM_CUDA = 190
     EM_TILEGX = 191
-    # The Morph MT.
-    EM_MT = 0x2530
-    ## #DLX.
-    EM_DLX = 0x5aa5
-    ## #FRV.
-    EM_FRV = 0x5441
-    # Infineon Technologies 16-bit microcontroller with C166-V2 core.
-    EM_X16X = 0x4688
-    ## #Xstorym16
-    EM_XSTORMY16 = 0xad45
-    ## Renesas M32C
-    EM_M32C = 0xfeb0
-    ## #Vitesse IQ2000
-    EM_IQ2000 = 0xfeba
-    ## NIOS
-    EM_NIOS32 = 0xfebb
-    ## #Old AVR objects used 0x1057 (EM_AVR is correct).
+    EM_CLOUDSHIELD = 192
+    EM_COREA_1ST = 193
+    EM_COREA_2ND = 194
+    EM_ARC_COMPACT2 = 195
+    EM_OPEN8 = 196
+    EM_RL78 = 197
+    EM_VIDEOCORE5 = 198
+    EM_78K0R = 199
+    EM_56800EX = 200
+    EM_BA1 = 201
+    EM_BA2 = 202
+    EM_XCORE = 203
+    EM_MCHP_PIC = 204
+    EM_INTELGT = 205
+    EM_INTEL206 = 206
+    EM_INTEL207 = 207
+    EM_INTEL208 = 208
+    EM_INTEL209 = 209
+    EM_KM32 = 210
+    EM_KMX32 = 211
+    EM_KMX16 = 212
+    EM_KMX8 = 213
+    EM_KVARC = 214
+    EM_CDP = 215
+    EM_COGE = 216
+    EM_COOL = 217
+    EM_NORC = 218
+    EM_CSR_KALIMBA = 219
+    EM_Z80 = 220
+    EM_VISIUM = 221
+    EM_FT32 = 222
+    EM_MOXIE = 223
+    EM_AMDGPU = 224
+    EM_RISCV = 243
+    EM_LANAI = 244
+    EM_CEVA = 245
+    EM_CEVA_X2 = 246
+    EM_BPF = 247
+    EM_GRAPHCORE_IPU = 248
+    EM_IMG1 = 249
+    EM_NFP = 250
+    EM_VE = 251
+    EM_CSKY = 252
+    EM_ARC_COMPACT3_64 = 253
+    EM_MCS6502 = 254
+    EM_ARC_COMPACT3 = 255
+    EM_KVX = 256
+    EM_65816 = 257
+    EM_LOONGARCH = 258
+    EM_KF32 = 259
+    EM_U16_U8CORE = 260
+    EM_TACHYUM = 261
+    EM_56800EF = 262
     EM_AVR_OLD = 0x1057
-    ## Old MSP430 objects used 0x1059 (EM_MSP430 is correct).
     EM_MSP430_OLD = 0x1059
-    ## Old FR30 objects used 0x3330 (EM_FR30 is correct).
-    EM_FR30_OLD = 0x3330
-    ## Old OpenRISC objects used 0x3426 and 0x8472 (EM_OR1K is correct).
-    EM_OR1K_OLD = 0x3426
-    ## Old D10V objects used 0x7650 (EM_D10V is correct).
-    EM_D10V_OLD = 0x7650
-    ## Old D30V objects used 0x7676 (EM_D30V is correct).
-    EM_D30V_OLD = 0x7676
-    ## Old IP2X objects used 0x8217 (EM_IP2K is correct).
+    EM_MT = 0x2530
+    EM_CYGNUS_FR30 = 0x3330
+    EM_WEBASSEMBLY = 0x4157
+    EM_S12Z = 0x4DEF
+    EM_DLX = 0x5aa5
+    EM_CYGNUS_FRV = 0x5441
+    EM_XC16X = 0x4688
+    EM_CYGNUS_D10V = 0x7650
+    EM_CYGNUS_D30V = 0x7676
     EM_IP2K_OLD = 0x8217
-    ## Old PowerPC objects used 0x9025 (EM_PPC is correct).
-    EM_POWERPC_OLD = 0x9025
-    ## Old Alpha objects used 0x9026 (EM_ALPHA is correct).
-    EM_ALPHA_OLD = 0x9026
-    ## Old M32R objects used 0x9041 (EM_M32R is correct).
-    EM_M32R_OLD = 0x9041
-    ## Old V850 objects used 0x9080 (EM_V850 is correct).
-    EM_V850_OLD = 0x9080
-    ## Old S/390 objects used 0xa390 (EM_S390 is correct).
+    EM_CYGNUS_POWERPC = 0x9025
+    EM_ALPHA = 0x9026
+    EM_CYGNUS_M32R = 0x9041
+    EM_CYGNUS_V850 = 0x9080
     EM_S390_OLD = 0xa390
-    ## Old Xtensa objects used 0xabc7 (EM_XTENSA is correct).
     EM_XTENSA_OLD = 0xabc7
+    EM_XSTORMY16 = 0xad45
+    EM_CYGNUS_MN10300 = 0xbeef
+    EM_CYGNUS_MN10200 = 0xdead
+    EM_M32C_OLD = 0xFEB0
+    EM_IQ2000 = 0xFEBA
+    EM_NIOS32 = 0xFEBB
+    EM_CYGNUS_MEP = 0xF00D
+    EM_MOXIE_OLD = 0xFEED
     EM_MICROBLAZE_OLD = 0xbaab
-    ## Old MN10300 objects used 0xbeef (EM_MN10300 is correct).
-    EM_MN10300_OLD = 0xbeef
-    ## Old MN10200 objects used 0xdead (EM_MN10200 is correct).
-    EM_MN10200_OLD = 0xdead
+    EM_ADAPTEVA_EPIPHANY = 0x1223
+    EM_OPENRISC = EM_OR1K
+    EM_CSKY_OLD = EM_MCORE
 
 
 ## \class Elf32_Ehdr
