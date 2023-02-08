@@ -55,3 +55,22 @@ class ELFTests(unittest.TestCase):
 
         h,a = invector.get_section_by_name('.dynamic')
         self.assertEqual(expected, actual)
+
+    def test_phdr(self):
+        data = b"TESTTEST"
+        elf = ELF()
+        section = elf.append_section("test", data, 0x12345678)
+        phdr = elf._append_segment(PT.PT_LOAD, 0xDEADBEEF, 0xC0FFEE, len(data), len(data), PF.PF_R, [section])
+        actual = bytes(elf)
+
+        self.assertEqual(elf.Elf.Phdr_table[phdr].p_offset, elf.Elf.Shdr_table[section].sh_offset)
+
+        expected = bytes.fromhex("""
+            7f454c4601020100000000000000000000020000000000010000000000000034000000740000000000340020000200280003
+            0001000000010000000000000000000000000000000000000000000000050000000100000001000000fcdeadbeef00c0ffee
+            0000000800000008000000040000000100000000000000000000000000000000000000ec0000000000000000000000000000
+            00000000000000000001000000030000000000000000000000ec00000010000000000000000000000001000000000000000b
+            000000010000000012345678000000fc0000000800000000000000000000000100000000002e736873747274616200746573
+            74005445535454455354
+        """)
+        self.assertEqual(expected, actual)

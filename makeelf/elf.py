@@ -110,7 +110,7 @@ class _Symtab:
 
 class ELF:
     """This class is a wrapper on ELF structures provided by elfstruct module
-    
+
     It provides set of functions allowing easy manipulation of ELF as a whole,
     without requirement of update of particular fields, especially offsets and
     section headers"""
@@ -214,6 +214,11 @@ class ELF:
             Shdr.sh_offset = cursor
             Shdr.sh_size = section_len
             cursor += section_len
+
+        # Update offsets in program headers - use the offsets of the lowest linked section
+        for Phdr in self.Elf.Phdr_table:
+            if Phdr.sections:
+                Phdr.p_offset = min(self.Elf.Shdr_table[i].sh_offset for i in Phdr.sections)
 
         return bytes(self.Elf)
 
@@ -379,11 +384,11 @@ class ELF:
         return self._append_segment(ptype=PT.PT_LOAD, vaddr=addr, paddr=0,
                 file_size=Shdr.sh_size, mem_size=mem_size, flags=p_flags)
 
-    def _append_segment(self, ptype, vaddr, paddr, file_size, mem_size, flags=0):
+    def _append_segment(self, ptype, vaddr, paddr, file_size, mem_size, flags=0, sections=None):
         # create instance of Phdr
         Phdr = Elf32_Phdr(p_type=ptype, p_offset=0, p_vaddr=vaddr,
                 p_paddr=paddr, p_filesz=file_size, p_memsz=mem_size,
-                p_flags=flags, p_align=1, little=self.little)
+                p_flags=flags, p_align=1, little=self.little, sections=sections or [])
 
         # add Phdr to elf object
         ret = len(self.Elf.Phdr_table)
