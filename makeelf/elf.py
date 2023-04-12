@@ -209,11 +209,33 @@ class ELF:
             self.Elf.Ehdr.e_shnum = 0
 
         # update section offsets in section headers
+        orig_poffset = []
+        for i, Phdr in enumerate(self.Elf.Phdr_table):
+            program = self.Elf.programs[i]
+            program_len = len(program)
+            Phdr.p_filesz = program_len
+            orig_poffset.append(Phdr.p_offset)
+            if isinstance(program, memoryview):
+                idx, hdr = next((i, x) for i, x in enumerate(self.Elf.Phdr_table) if program.obj is self.Elf.programs[i])
+                Phdr.p_offset = Phdr.p_offset - orig_poffset[idx] + hdr.p_offset
+            else:
+                Phdr.p_offset = cursor
+                cursor += program_len
+
+        # update section offsets in section headers
         for i, Shdr in enumerate(self.Elf.Shdr_table):
-            section_len = len(self.Elf.sections[i])
-            Shdr.sh_offset = cursor
+            section = self.Elf.sections[i]
+            section_len = len(section)
+            # Check for all zeros - strip such sections
+            if next((False for b in section if b != 0x00), True):
+                Shdr.sh_offset = -1
+            elif isinstance(section, memoryview):
+                idx, hdr = next((i, x) for i, x in enumerate(self.Elf.Phdr_table) if section.obj is self.Elf.programs[i])
+                Shdr.sh_offset = Shdr.sh_offset - orig_poffset[idx] + hdr.p_offset
+            else:
+                Shdr.sh_offset = cursor
+                cursor += section_len
             Shdr.sh_size = section_len
-            cursor += section_len
 
         return bytes(self.Elf)
 
